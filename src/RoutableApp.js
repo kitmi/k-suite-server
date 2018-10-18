@@ -1,15 +1,14 @@
 "use strict";
 
 const path = require('path');
-const CliApp = require('@k-suite/cli-app');
+const App = require('@k-suite/app');
 const Util = require('rk-utils');
 const _ = Util._;
 const Errors = require('./Errors');
 const Literal = require('./enum/Literal');
-const HttpCode = require('http-status-codes');
 const Koa = require('koa');
 
-class AppWithMiddleware extends CliApp {    
+class RoutableApp extends App {    
     /**     
      * @param {string} name - The name of the cli application.     
      * @param {object} [options] - Application options     
@@ -121,7 +120,7 @@ class AppWithMiddleware extends CliApp {
      * Use middlewares
      * @param {Router} router
      * @param {*} middlewares - Can be an array of middleware entries or a key-value list of registerred middlewares
-     * @returns {AppWithMiddleware}
+     * @returns {RoutableApp}
      */
     useMiddlewares(router, middlewares) {
         let middlewareFactory, middleware;
@@ -279,4 +278,4 @@ class AppWithMiddleware extends CliApp {
     }
 };
 
-module.exports = AppWithMiddleware;
+module.exports = RoutableApp;
