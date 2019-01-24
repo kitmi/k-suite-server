@@ -1,0 +1,28 @@
+import '<oolong>/types'
+import './common'
+
+entity profile
+  -- "Profile"
+
+  has
+    firstName : name optional
+    middleName : name optional
+    surName : name optional
+    dob : datetime optional -- 'Date of birth'
+    avatar : url optional    
+    email : email optional
+    mobile : phone optional
+    provider : name optional
+    providerId : text maxLength(100) optional
+
+  associations
+    belongsTo 'user' as 'owner'
+    refersTo 'gender' as 'gender'
+
+  key owner
+
+entity gender extends dictionary
+  data [
+    { code: 'M', name: 'male' },
+    { code: 'F', name: 'female' }
+  ]

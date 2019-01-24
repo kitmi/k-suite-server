@@ -1,0 +1,755 @@
+{
+    "name": "levoFoundation",
+    "displayName": "Levo Foundation",
+    "entities": {
+        "service": {
+            "name": "service",
+            "displayName": "Service",
+            "features": {
+                "autoId": {
+                    "field": "id"
+                },
+                "createTimestamp": {
+                    "field": "createdAt"
+                },
+                "updateTimestamp": {
+                    "field": "updatedAt"
+                },
+                "logicalDeletion": {
+                    "field": "isDeleted",
+                    "value": true
+                }
+            },
+            "fields": {
+                "startDate": {
+                    "type": "datetime",
+                    "default": {
+                        "oolType": "SymbolToken",
+                        "name": "now"
+                    },
+                    "displayName": "Start Date"
+                },
+                "endDate": {
+                    "type": "datetime",
+                    "optional": true,
+                    "displayName": "End Date"
+                },
+                "isValid": {
+                    "type": "boolean",
+                    "displayName": "Is Valid"
+                },
+                "id": {
+                    "type": "integer",
+                    "auto": true,
+                    "writeOnce": true,
+                    "startFrom": 10002,
+                    "displayName": "Id"
+                },
+                "name": {
+                    "type": "text",
+                    "maxLength": 100,
+                    "comment": "Service or service package display name",
+                    "displayName": "Service or service package display name"
+                },
+                "desc": {
+                    "type": "text",
+                    "optional": true,
+                    "subClass": [
+                        "desc"
+                    ],
+                    "displayName": "Desc"
+                },
+                "isPackage": {
+                    "type": "boolean",
+                    "default": false,
+                    "displayName": "Is Package"
+                },
+                "version": {
+                    "type": "text",
+                    "maxLength": 10,
+                    "optional": true,
+                    "displayName": "Version"
+                },
+                "createdAt": {
+                    "type": "datetime",
+                    "auto": true,
+                    "readOnly": true,
+                    "writeOnce": true,
+                    "displayName": "Created At"
+                },
+                "updatedAt": {
+                    "type": "datetime",
+                    "readOnly": true,
+                    "forceUpdate": true,
+                    "optional": true,
+                    "displayName": "Updated At"
+                },
+                "isDeleted": {
+                    "type": "boolean",
+                    "default": false,
+                    "readOnly": true,
+                    "displayName": "Is Deleted"
+                }
+            },
+            "key": "id"
+        },
+        "serviceCategory": {
+            "name": "serviceCategory",
+            "displayName": "Service Category",
+            "features": {
+                "logicalDeletion": {
+                    "field": "isDeleted",
+                    "value": true
+                }
+            },
+            "fields": {
+                "code": {
+                    "type": "text",
+                    "maxLength": 20,
+                    "subClass": [
+                        "code"
+                    ],
+                    "displayName": "Code"
+                },
+                "name": {
+                    "type": "text",
+                    "maxLength": 100,
+                    "displayName": "Name"
+                },
+                "desc": {
+                    "type": "text",
+                    "optional": true,
+                    "subClass": [
+                        "desc"
+                    ],
+                    "displayName": "Desc"
+                },
+                "isDeleted": {
+                    "type": "boolean",
+                    "default": false,
+                    "readOnly": true,
+                    "displayName": "Is Deleted"
+                }
+            },
+            "key": "code"
+        },
+        "servicePrice": {
+            "name": "servicePrice",
+            "displayName": "Service Price",
+            "features": {
+                "autoId": {
+                    "field": "id"
+                }
+            },
+            "fields": {
+                "startDate": {
+                    "type": "datetime",
+                    "default": {
+                        "oolType": "SymbolToken",
+                        "name": "now"
+                    },
+                    "displayName": "Start Date"
+                },
+                "endDate": {
+                    "type": "datetime",
+                    "optional": true,
+                    "displayName": "End Date"
+                },
+                "isValid": {
+                    "type": "boolean",
+                    "displayName": "Is Valid"
+                },
+                "id": {
+                    "type": "integer",
+                    "auto": true,
+                    "writeOnce": true,
+                    "displayName": "Id"
+                },
+                "unit": {
+                    "type": "text",
+                    "maxLength": 20,
+                    "displayName": "Unit"
+                },
+                "quantity": {
+                    "type": "integer",
+                    "displayName": "Quantity"
+                },
+                "amount": {
+                    "type": "number",
+                    "subClass": [
+                        "money"
+                    ],
+                    "displayName": "Amount"
+                },
+                "desc": {
+                    "type": "text",
+                    "optional": true,
+                    "subClass": [
+                        "desc"
+                    ],
+                    "displayName": "Desc"
+                }
+            },
+            "key": "id"
+        },
+        "servicePromotion": {
+            "name": "servicePromotion",
+            "displayName": "Service Promotion",
+            "features": {
+                "autoId": {
+                    "field": "id"
+                }
+            },
+            "fields": {
+                "startDate": {
+                    "type": "datetime",
+                    "default": {
+                        "oolType": "SymbolToken",
+                        "name": "now"
+                    },
+                    "displayName": "Start Date"
+                },
+                "endDate": {
+                    "type": "datetime",
+                    "optional": true,
+                    "displayName": "End Date"
+                },
+                "isValid": {
+                    "type": "boolean",
+                    "displayName": "Is Valid"
+                },
+                "id": {
+                    "type": "integer",
+                    "auto": true,
+                    "writeOnce": true,
+                    "displayName": "Id"
+                },
+                "name": {
+                    "type": "text",
+                    "maxLength": 40,
+                    "subClass": [
+                        "name"
+                    ],
+                    "displayName": "Name"
+                },
+                "desc": {
+                    "type": "text",
+                    "optional": true,
+                    "displayName": "Desc"
+                },
+                "discountAmount": {
+                    "type": "number",
+                    "optional": true,
+                    "displayName": "Discount Amount"
+                }
+            },
+            "key": "id"
+        },
+        "serviceLevel": {
+            "name": "serviceLevel",
+            "displayName": "Service Level",
+            "features": {
+                "logicalDeletion": {
+                    "field": "isDeleted",
+                    "value": true
+                }
+            },
+            "fields": {
+                "code": {
+                    "type": "text",
+                    "maxLength": 20,
+                    "subClass": [
+                        "code"
+                    ],
+                    "displayName": "Code"
+                },
+                "name": {
+                    "type": "text",
+                    "maxLength": 40,
+                    "subClass": [
+                        "name"
+                    ],
+                    "displayName": "Name"
+                },
+                "desc": {
+                    "type": "text",
+                    "optional": true,
+                    "subClass": [
+                        "desc"
+                    ],
+                    "displayName": "Desc"
+                },
+                "isDeleted": {
+                    "type": "boolean",
+                    "default": false,
+                    "readOnly": true,
+                    "displayName": "Is Deleted"
+                }
+            },
+            "key": "code"
+        },
+        "serviceReview": {
+            "name": "serviceReview",
+            "displayName": "Service Review",
+            "features": {
+                "autoId": {
+                    "field": "id"
+                },
+                "createTimestamp": {
+                    "field": "createdAt"
+                }
+            },
+            "fields": {
+                "id": {
+                    "type": "integer",
+                    "auto": true,
+                    "writeOnce": true,
+                    "displayName": "Id"
+                },
+                "rating": {
+                    "type": "integer",
+                    "digits": 1,
+                    "optional": true,
+                    "modifiers": [
+                        {
+                            "oolType": "Validator",
+                            "name": "min",
+                            "args": [
+                                1
+                            ]
+                        },
+                        {
+                            "oolType": "Validator",
+                            "name": "max",
+                            "args": [
+                                5
+                            ]
+                        }
+                    ],
+                    "displayName": "Rating"
+                },
+                "comment": {
+                    "type": "text",
+                    "displayName": "Comment"
+                },
+                "createdAt": {
+                    "type": "datetime",
+                    "auto": true,
+                    "readOnly": true,
+                    "writeOnce": true,
+                    "displayName": "Created At"
+                }
+            },
+            "key": "id"
+        },
+        "discountType": {
+            "name": "discountType",
+            "displayName": "Discount Type",
+            "features": {
+                "logicalDeletion": {
+                    "field": "isDeleted",
+                    "value": true
+                }
+            },
+            "fields": {
+                "code": {
+                    "type": "text",
+                    "maxLength": 20,
+                    "subClass": [
+                        "code"
+                    ],
+                    "displayName": "Code"
+                },
+                "name": {
+                    "type": "text",
+                    "maxLength": 40,
+                    "subClass": [
+                        "name"
+                    ],
+                    "displayName": "Name"
+                },
+                "desc": {
+                    "type": "text",
+                    "optional": true,
+                    "subClass": [
+                        "desc"
+                    ],
+                    "displayName": "Desc"
+                },
+                "isDeleted": {
+                    "type": "boolean",
+                    "default": false,
+                    "readOnly": true,
+                    "displayName": "Is Deleted"
+                }
+            },
+            "key": "code"
+        },
+        "reviewReply": {
+            "name": "reviewReply",
+            "displayName": "Review Reply",
+            "features": {
+                "autoId": {
+                    "field": "id"
+                },
+                "createTimestamp": {
+                    "field": "createdAt"
+                }
+            },
+            "fields": {
+                "id": {
+                    "type": "integer",
+                    "auto": true,
+                    "writeOnce": true,
+                    "displayName": "Id"
+                },
+                "replyContent": {
+                    "type": "text",
+                    "displayName": "Reply Content"
+                },
+                "createdAt": {
+                    "type": "datetime",
+                    "auto": true,
+                    "readOnly": true,
+                    "writeOnce": true,
+                    "displayName": "Created At"
+                }
+            },
+            "key": "id"
+        },
+        "robot": {
+            "name": "robot",
+            "displayName": "Robot",
+            "features": {
+                "createTimestamp": {
+                    "field": "createdAt"
+                },
+                "updateTimestamp": {
+                    "field": "updatedAt"
+                },
+                "logicalDeletion": {
+                    "field": "isDeleted",
+                    "value": true
+                }
+            },
+            "fields": {
+                "code": {
+                    "type": "text",
+                    "maxLength": 20,
+                    "subClass": [
+                        "code"
+                    ],
+                    "displayName": "Code"
+                },
+                "introduction": {
+                    "type": "text",
+                    "displayName": "Introduction"
+                },
+                "voiceScript": {
+                    "type": "text",
+                    "displayName": "Voice Script"
+                },
+                "avatar": {
+                    "type": "text",
+                    "maxLength": 2000,
+                    "modifiers": [
+                        {
+                            "oolType": "Validator",
+                            "name": "isURL"
+                        }
+                    ],
+                    "subClass": [
+                        "url"
+                    ],
+                    "displayName": "Avatar"
+                },
+                "images": {
+                    "type": "array",
+                    "optional": true,
+                    "displayName": "Images"
+                },
+                "video": {
+                    "type": "text",
+                    "maxLength": 2000,
+                    "optional": true,
+                    "modifiers": [
+                        {
+                            "oolType": "Validator",
+                            "name": "isURL"
+                        }
+                    ],
+                    "subClass": [
+                        "url"
+                    ],
+                    "displayName": "Video"
+                },
+                "voice": {
+                    "type": "text",
+                    "maxLength": 2000,
+                    "optional": true,
+                    "modifiers": [
+                        {
+                            "oolType": "Validator",
+                            "name": "isURL"
+                        }
+                    ],
+                    "subClass": [
+                        "url"
+                    ],
+                    "displayName": "Voice"
+                },
+                "email": {
+                    "type": "text",
+                    "maxLength": 200,
+                    "modifiers": [
+                        {
+                            "oolType": "Validator",
+                            "name": "isEmail"
+                        }
+                    ],
+                    "subClass": [
+                        "email"
+                    ],
+                    "displayName": "Email"
+                },
+                "firstname": {
+                    "type": "text",
+                    "maxLength": 40,
+                    "subClass": [
+                        "name"
+                    ],
+                    "displayName": "Firstname"
+                },
+                "lastname": {
+                    "type": "text",
+                    "maxLength": 40,
+                    "subClass": [
+                        "name"
+                    ],
+                    "displayName": "Lastname"
+                },
+                "nickname": {
+                    "type": "text",
+                    "maxLength": 40,
+                    "subClass": [
+                        "name"
+                    ],
+                    "displayName": "Nickname"
+                },
+                "expertTitle": {
+                    "type": "text",
+                    "maxLength": 40,
+                    "subClass": [
+                        "name"
+                    ],
+                    "displayName": "Expert Title"
+                },
+                "address": {
+                    "type": "text",
+                    "maxLength": 200,
+                    "displayName": "Address"
+                },
+                "createdAt": {
+                    "type": "datetime",
+                    "auto": true,
+                    "readOnly": true,
+                    "writeOnce": true,
+                    "displayName": "Created At"
+                },
+                "updatedAt": {
+                    "type": "datetime",
+                    "readOnly": true,
+                    "forceUpdate": true,
+                    "optional": true,
+                    "displayName": "Updated At"
+                },
+                "isDeleted": {
+                    "type": "boolean",
+                    "default": false,
+                    "readOnly": true,
+                    "displayName": "Is Deleted"
+                }
+            },
+            "key": "code"
+        },
+        "gender": {
+            "name": "gender",
+            "displayName": "Gender",
+            "features": {
+                "logicalDeletion": {
+                    "field": "isDeleted",
+                    "value": true
+                }
+            },
+            "fields": {
+                "code": {
+                    "type": "text",
+                    "maxLength": 20,
+                    "subClass": [
+                        "code"
+                    ],
+                    "displayName": "Code"
+                },
+                "name": {
+                    "type": "text",
+                    "maxLength": 40,
+                    "subClass": [
+                        "name"
+                    ],
+                    "displayName": "Name"
+                },
+                "desc": {
+                    "type": "text",
+                    "optional": true,
+                    "subClass": [
+                        "desc"
+                    ],
+                    "displayName": "Desc"
+                },
+                "isDeleted": {
+                    "type": "boolean",
+                    "default": false,
+                    "readOnly": true,
+                    "displayName": "Is Deleted"
+                }
+            },
+            "key": "code"
+        },
+        "robotContact": {
+            "name": "robotContact",
+            "displayName": "Robot Contact",
+            "features": {
+                "autoId": {
+                    "field": "id"
+                },
+                "createTimestamp": {
+                    "field": "createdAt"
+                },
+                "logicalDeletion": {
+                    "field": "isDeleted",
+                    "value": true
+                }
+            },
+            "fields": {
+                "id": {
+                    "type": "integer",
+                    "auto": true,
+                    "writeOnce": true,
+                    "displayName": "Id"
+                },
+                "info": {
+                    "type": "text",
+                    "maxLength": 200,
+                    "comment": "Contact information",
+                    "displayName": "Contact information"
+                },
+                "visible": {
+                    "type": "boolean",
+                    "default": true,
+                    "displayName": "Visible"
+                },
+                "createdAt": {
+                    "type": "datetime",
+                    "auto": true,
+                    "readOnly": true,
+                    "writeOnce": true,
+                    "displayName": "Created At"
+                },
+                "isDeleted": {
+                    "type": "boolean",
+                    "default": false,
+                    "readOnly": true,
+                    "displayName": "Is Deleted"
+                }
+            },
+            "key": "id"
+        },
+        "contactType": {
+            "name": "contactType",
+            "displayName": "Contact Type",
+            "features": {
+                "logicalDeletion": {
+                    "field": "isDeleted",
+                    "value": true
+                }
+            },
+            "fields": {
+                "code": {
+                    "type": "text",
+                    "maxLength": 20,
+                    "subClass": [
+                        "code"
+                    ],
+                    "displayName": "Code"
+                },
+                "name": {
+                    "type": "text",
+                    "maxLength": 40,
+                    "subClass": [
+                        "name"
+                    ],
+                    "displayName": "Name"
+                },
+                "desc": {
+                    "type": "text",
+                    "optional": true,
+                    "subClass": [
+                        "desc"
+                    ],
+                    "displayName": "Desc"
+                },
+                "isDeleted": {
+                    "type": "boolean",
+                    "default": false,
+                    "readOnly": true,
+                    "displayName": "Is Deleted"
+                }
+            },
+            "key": "code"
+        },
+        "supplier": {
+            "name": "supplier",
+            "displayName": "Supplier",
+            "features": {
+                "autoId": {
+                    "field": "id"
+                },
+                "logicalDeletion": {
+                    "field": "isDeleted",
+                    "value": true
+                }
+            },
+            "fields": {
+                "id": {
+                    "type": "integer",
+                    "auto": true,
+                    "writeOnce": true,
+                    "startFrom": 1001,
+                    "displayName": "Id"
+                },
+                "name": {
+                    "type": "text",
+                    "maxLength": 40,
+                    "subClass": [
+                        "name"
+                    ],
+                    "displayName": "Name"
+                },
+                "legalName": {
+                    "type": "text",
+                    "maxLength": 100,
+                    "displayName": "Legal Name"
+                },
+                "isDeleted": {
+                    "type": "boolean",
+                    "default": false,
+                    "readOnly": true,
+                    "displayName": "Is Deleted"
+                }
+            },
+            "key": "id"
+        }
+    },
+    "datasets": {},
+    "views": {}
+}

@@ -49,7 +49,8 @@ module.exports = {
     
         let options = Object.assign({ 
             env: server.env, 
-            logWithAppName: server.options.logWithAppName 
+            logWithAppName: server.options.logWithAppName,
+            traceMiddlewares: server.options.traceMiddlewares
         }, config.options);
 
         let appPath;     

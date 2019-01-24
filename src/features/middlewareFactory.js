@@ -3,6 +3,27 @@
 /**
  * Enable object store feature
  * @module Feature_ObjectStore
+ * 
+ * @example
+ *   "middlewareFactory": {
+ *       //new middleware name
+ *       "listOfMiddleware": {
+ *           "middleware1": { // options
+ *               ...
+ *           },
+ *           "middleware2": { // options
+ *               ...
+ *           }
+ *       },
+ *        "altListOfMiddleware": [
+ *           {
+ *               "name": "middleware1",
+ *               "options": { ... } 
+ *           },
+ *           [ "middleware2", { ... } ],
+ *           "middleware3"
+ *       ]
+ *   },
  */
 
 const { _ } = require('rk-utils');

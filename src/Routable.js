@@ -2,9 +2,11 @@
 
 const path = require('path');
 const { _, fs, glob, urlJoin, ensureLeftSlash, urlAppendQuery } = require('rk-utils');
+const { tryRequire } = require('@k-suite/app/lib/utils/Helpers');
 const Errors = require('./Errors');
 const Literal = require('./enum/Literal');
 const Koa = require('koa');
+const http = require('http');
 
 const Routable = T => class extends T {    
     /**     
@@ -43,7 +45,8 @@ const Routable = T => class extends T {
 
         //inject the appModule instance in the first middleware
         this.router.use((ctx, next) => { 
-            ctx.appModule = this; return next(); 
+            ctx.appModule = this; 
+            return next(); 
         });
 
         this.on('configLoaded', () => {
@@ -110,6 +113,11 @@ const Routable = T => class extends T {
             return this.server.getMiddlewareFactory(name);
         }
 
+        let npmMiddleware = tryRequire(name);
+        if (npmMiddleware) {
+            return npmMiddleware;
+        }
+
         throw new Errors.ServerError(`Don't know where to load middleware "${name}".`);
     }
 
@@ -154,9 +162,9 @@ const Routable = T => class extends T {
         
         middlewareFunctions.forEach(({ name, middleware }) => {            
             if (Array.isArray(middleware)) {
-                middleware.forEach(m => this._useMiddleware(router, m));
+                middleware.forEach(m => this.useMiddleware(router, m));
             } else {
-                this._useMiddleware(router, middleware);
+                this.useMiddleware(router, middleware);
             }
 
             this.log('verbose', `Attached middleware [${name}].`);
@@ -178,7 +186,7 @@ const Routable = T => class extends T {
         if (_.isPlainObject(actions)) {
             _.forOwn(actions, (options, name) => {
                 middlewareFactory = this.getMiddlewareFactory(name);
-                handlers.push(middlewareFactory(options, this));
+                handlers.push(this._wrapMiddlewareTracer(middlewareFactory(options, this), name));
             });
         } else {
             actions = _.castArray(actions);
@@ -202,19 +210,19 @@ const Routable = T => class extends T {
                 if (type === 'string') {
                     // [ 'namedMiddleware' ]
                     middlewareFactory = this.getMiddlewareFactory(action);                    
-                    handlers.push(middlewareFactory(null, this));
+                    handlers.push(this._wrapMiddlewareTracer(middlewareFactory(null, this), action));
                 } else if (type === 'function') {
-                    handlers.push(action);
+                    handlers.push(this._wrapMiddlewareTracer(action));
                 } else if (Array.isArray(action)) {
                     assert: action.length > 0 && action.length <= 2, 'Invalid middleware entry';
 
                     middlewareFactory = this.getMiddlewareFactory(action[0]);                    
-                    handlers.push(middlewareFactory(action.length > 1 ? action[1] : undefined, this));                    
+                    handlers.push(this._wrapMiddlewareTracer(middlewareFactory(action.length > 1 ? action[1] : undefined, this)));                    
                 } else {
                     assert: _.isPlainObject(action) && 'name' in action, 'Invalid middleware entry';
 
                     middlewareFactory = this.getMiddlewareFactory(action.name);                    
-                    handlers.push(middlewareFactory(action.options, this));
+                    handlers.push(this._wrapMiddlewareTracer(middlewareFactory(action.options, this), action.name));
                 }
             })
         }
@@ -287,10 +295,48 @@ const Routable = T => class extends T {
 
             return action(ctx);
         };        
-    }       
+    }   
+    
+    restApiWrapper() {
+        return async (ctx, next) => {
+            try {
+                await next();
+                if (ctx.response.status === 404 && !ctx.response.body) ctx.throw(404);
+            } catch (err) {
+                ctx.status = typeof err.status === 'number' ? err.status : 500;
+          
+                // application
+                ctx.app.emit('error', err, ctx);
+          
+                // accepted types
+                ctx.type = 'application/json'
 
-    _useMiddleware(router, middleware) {        
-        router.use(middleware);
+                let errorObject = { error: err.expose ? err.message : http.STATUS_CODES[ctx.status] };
+                if (this.env === 'development') {
+                    errorObject.stack = err.stack;
+                    errorObject.appModule = this.name;
+                }
+
+                Object.assign(errorObject, _.pick(err, ['code', 'errorCode', 'payload'])); 
+
+                ctx.body = errorObject;
+            }        
+        };       
+    }
+
+    useMiddleware(router, middleware) {          
+        router.use(this._wrapMiddlewareTracer(middleware));
+    }
+
+    _wrapMiddlewareTracer(middleware, name) {
+        if (this.options.traceMiddlewares) {            
+            return (ctx, next) => {
+                this.log('debug', `Calling "${name || middleware.name}" ...`);
+                return middleware(ctx, next);
+            }
+        }
+
+        return middleware;
     }
 
     _getFeatureFallbackPath() {

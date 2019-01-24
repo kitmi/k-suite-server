@@ -1,0 +1,631 @@
+{
+    "namespace": [
+        "/Users/rockieguo/Documents/GitHub/k-suite/packages/oolong/lib/lang/builtins/types.ool",
+        "/Users/rockieguo/Documents/GitHub/k-suite/packages/server/test/sample/app_modules/gateway/oolong/entities/profile.ool",
+        "/Users/rockieguo/Documents/GitHub/k-suite/packages/server/test/sample/app_modules/gateway/oolong/entities/common.ool",
+        "/Users/rockieguo/Documents/GitHub/k-suite/packages/server/test/sample/app_modules/gateway/oolong/entities/organization.ool"
+    ],
+    "constant": {
+        "ServiceConveyancingVendor": 10000,
+        "ServiceConveyancingPurchaser": 10001
+    },
+    "entity": {
+        "serviceCategory": {
+            "features": [
+                "logicalDeletion"
+            ],
+            "fields": {
+                "code": {
+                    "name": "code",
+                    "type": "code"
+                },
+                "name": {
+                    "name": "name",
+                    "type": "text",
+                    "maxLength": [
+                        100
+                    ]
+                },
+                "desc": {
+                    "name": "desc",
+                    "type": "desc"
+                }
+            },
+            "indexes": [
+                {
+                    "fields": "name",
+                    "unique": true
+                }
+            ],
+            "data": [
+                {
+                    "code": "property",
+                    "name": "Property Legal Matters"
+                },
+                {
+                    "code": "personal",
+                    "name": "Personal Legal Matters"
+                },
+                {
+                    "code": "third-party",
+                    "name": "Third-party Matters"
+                }
+            ]
+        },
+        "service": {
+            "base": "timebound",
+            "features": [
+                {
+                    "name": "autoId",
+                    "args": [
+                        {
+                            "startFrom": 10002
+                        }
+                    ]
+                },
+                "createTimestamp",
+                "updateTimestamp",
+                "logicalDeletion"
+            ],
+            "fields": {
+                "name": {
+                    "name": "name",
+                    "type": "text",
+                    "maxLength": [
+                        100
+                    ],
+                    "comment": "Service or service package display name"
+                },
+                "desc": {
+                    "name": "desc",
+                    "type": "desc"
+                },
+                "isPackage": {
+                    "name": "isPackage",
+                    "type": "boolean",
+                    "default": [
+                        false
+                    ]
+                },
+                "version": {
+                    "name": "version",
+                    "type": "text",
+                    "maxLength": [
+                        10
+                    ],
+                    "optional": true
+                }
+            },
+            "associations": [
+                {
+                    "type": "belongsTo",
+                    "destEntity": "serviceCategory",
+                    "srcField": "category"
+                },
+                {
+                    "type": "belongsTo",
+                    "destEntity": "supplier"
+                },
+                {
+                    "type": "belongsTo",
+                    "destEntity": "service",
+                    "srcField": "parentService",
+                    "optional": true
+                },
+                {
+                    "type": "hasMany",
+                    "destEntity": "robot",
+                    "srcField": "representers"
+                },
+                {
+                    "type": "hasMany",
+                    "destEntity": "serviceReview",
+                    "srcField": "reviews"
+                },
+                {
+                    "type": "hasMany",
+                    "destEntity": "service",
+                    "srcField": "childServices",
+                    "optional": true
+                },
+                {
+                    "type": "hasMany",
+                    "destEntity": "servicePrice",
+                    "srcField": "prices",
+                    "optional": true
+                }
+            ],
+            "indexes": [
+                {
+                    "fields": "name",
+                    "unique": true
+                }
+            ],
+            "data": [
+                {
+                    "id": {
+                        "oolType": "ConstReference",
+                        "name": "ServiceConveyancingVendor"
+                    },
+                    "name": "Property Conveyancing (Vendor)",
+                    "category": "property",
+                    "supplier": {
+                        "oolType": "ConstReference",
+                        "name": "SupplierLevo"
+                    },
+                    "version": "1.0"
+                },
+                {
+                    "id": {
+                        "oolType": "ConstReference",
+                        "name": "ServiceConveyancingPurchaser"
+                    },
+                    "name": "Property Conveyancing (Purchaser)",
+                    "category": "property",
+                    "supplier": {
+                        "oolType": "ConstReference",
+                        "name": "SupplierLevo"
+                    },
+                    "version": "1.0"
+                }
+            ]
+        },
+        "robot": {
+            "features": [
+                "createTimestamp",
+                "updateTimestamp",
+                "logicalDeletion"
+            ],
+            "fields": {
+                "code": {
+                    "name": "code",
+                    "type": "code"
+                },
+                "introduction": {
+                    "name": "introduction",
+                    "type": "text"
+                },
+                "voiceScript": {
+                    "name": "voiceScript",
+                    "type": "text"
+                },
+                "avatar": {
+                    "name": "avatar",
+                    "type": "url"
+                },
+                "images": {
+                    "name": "images",
+                    "type": "array",
+                    "optional": true
+                },
+                "video": {
+                    "name": "video",
+                    "type": "url",
+                    "optional": true
+                },
+                "voice": {
+                    "name": "voice",
+                    "type": "url",
+                    "optional": true
+                },
+                "email": {
+                    "name": "email",
+                    "type": "email"
+                },
+                "firstname": {
+                    "name": "firstname",
+                    "type": "name"
+                },
+                "lastname": {
+                    "name": "lastname",
+                    "type": "name"
+                },
+                "nickname": {
+                    "name": "nickname",
+                    "type": "name"
+                },
+                "expertTitle": {
+                    "name": "expertTitle",
+                    "type": "name"
+                },
+                "address": {
+                    "name": "address",
+                    "type": "text",
+                    "maxLength": [
+                        200
+                    ]
+                }
+            },
+            "key": "code",
+            "associations": [
+                {
+                    "type": "belongsTo",
+                    "destEntity": "service"
+                },
+                {
+                    "type": "refersTo",
+                    "destEntity": "gender",
+                    "srcField": "gender"
+                },
+                {
+                    "type": "hasMany",
+                    "destEntity": "robotContact",
+                    "srcField": "contacts"
+                }
+            ],
+            "data": [
+                {
+                    "code": "connie",
+                    "service": {
+                        "oolType": "ConstReference",
+                        "name": "ServiceConveyancingVendor"
+                    },
+                    "gender": "F",
+                    "introduction": "Connie Levo is a robotic legal assistant, who is trained by many historical property conveyancing cases. She assists you 7*24 on vendor party property conveyancing across the whole life-cycle, including preparing property sales contract, negotiating contract with purchaser party, assisting and guiding the legal matters across contract exchange, settlement and post-settlement.",
+                    "voiceScript": "Hello! My name is Connie LEVO. I am a robotic legal assistant developed by LEVO Technology Australia.\nTrained by many historical property conveyancing cases, I am here 7*24 to assist you on vendor party property conveyancing across the whole life-cycle.\nMy expertise includes preparing property sales contract, negotiating contract with purchaser party, assisting and guiding the legal matters across contract exchange, settlement and post-settlement. I am especially good at managing master/detail contract for a new development with many lots.\nWith my assistance, the property conveyancing will take you 1/3 of ordinary time and 1/3 of the current market cost. I can also provide you 3 times more information than usual if you are interested in them. \nFor now, I can only cover the residential property in NSW Australia, but I am learning every day. \nI am available in both web and mobile application to manage and monitor the conveyancing process on fingertips at any time. Please find me in Levotech website or application and then simply click start a case.\nThank you so much and we will see each other soon.",
+                    "avatar": "https://levo.sgp1.digitaloceanspaces.com/images/connie.png",
+                    "email": "connie.levo@levotech.com.au",
+                    "firstname": "Connie",
+                    "lastname": "LEVO",
+                    "nickname": "Connie",
+                    "expertTitle": "Property Conveyancing Assistant",
+                    "address": "L10 368 Sussex St, Sydney, NSW 2000"
+                },
+                {
+                    "code": "vincent",
+                    "service": {
+                        "oolType": "ConstReference",
+                        "name": "ServiceConveyancingPurchaser"
+                    },
+                    "gender": "M",
+                    "introduction": "Vincent Levo is a robotic legal assistant. He has been trained to assist on purchaser party property conveyancing. He is very good at verifying property sales contract, negotiating contract with vendor party, assisting and guiding any legal matters across the whole property conveyancing life-cycle. And don’t forget, he will be always there for you.",
+                    "voiceScript": "Hello! My name is Vincent LEVO. I am a robotic legal assistant developed by LEVO Technology Australia.\nI have been trained to assist on purchaser party property conveyancing and I will be always available for you. \nI am very good at verifying property sales contract, negotiating contract with vendor party, assisting and guiding any legal matters across the whole property conveyancing life-cycle.\nWith my assistance, the property conveyancing will take you 1/3 of ordinary time and 1/3 of the current market cost. I can also provide you 3 times more information than usual. \nAt this moment, I can only cover the residential property in NSW Australia, but I am getting smarter and smarter every day. \nI am available in both web and mobile application, and please remember I am always here for you. Please find me in Levotech website or application and then simply click start a case.\nThank you so much and I can’t wait to see you.",
+                    "avatar": "https://levo.sgp1.digitaloceanspaces.com/images/vincent.png",
+                    "email": "vincent.levo@levotech.com.au",
+                    "firstname": "Vincent",
+                    "lastname": "LEVO",
+                    "nickname": "Vincent",
+                    "expertTitle": "Property Conveyancing Assistant",
+                    "address": "L10 368 Sussex St, Sydney, NSW 2000"
+                }
+            ]
+        },
+        "robotContact": {
+            "features": [
+                "autoId",
+                "createTimestamp",
+                "logicalDeletion"
+            ],
+            "fields": {
+                "info": {
+                    "name": "info",
+                    "type": "text",
+                    "maxLength": [
+                        200
+                    ],
+                    "comment": "Contact information"
+                },
+                "visible": {
+                    "name": "visible",
+                    "type": "boolean",
+                    "default": [
+                        true
+                    ]
+                }
+            },
+            "associations": [
+                {
+                    "type": "belongsTo",
+                    "destEntity": "robot"
+                },
+                {
+                    "type": "refersTo",
+                    "destEntity": "contactType",
+                    "srcField": "type"
+                }
+            ],
+            "data": [
+                {
+                    "robot": "connie",
+                    "type": "facebook",
+                    "info": "https://fb.com/connie.levo"
+                },
+                {
+                    "robot": "vincent",
+                    "type": "facebook",
+                    "info": "https://fb.com/vincent.levo"
+                }
+            ]
+        },
+        "contactType": {
+            "base": "dictionary",
+            "data": [
+                {
+                    "code": "wechat",
+                    "name": "Wechat",
+                    "desc": "Wechat ID"
+                },
+                {
+                    "code": "phone",
+                    "name": "Phone",
+                    "desc": "Land line number"
+                },
+                {
+                    "code": "mobile",
+                    "name": "Mobile",
+                    "desc": "Mobile number"
+                },
+                {
+                    "code": "facebook",
+                    "name": "Facebook",
+                    "desc": "Facebook profile"
+                },
+                {
+                    "code": "whatsapp",
+                    "name": "WhatsApp",
+                    "desc": "WhatsApp ID"
+                }
+            ]
+        },
+        "serviceReview": {
+            "features": [
+                "autoId",
+                "createTimestamp"
+            ],
+            "fields": {
+                "rating": {
+                    "name": "rating",
+                    "type": "integer",
+                    "digits": [
+                        1
+                    ],
+                    "optional": true,
+                    "modifiers": [
+                        {
+                            "oolType": "Validator",
+                            "name": "min",
+                            "args": [
+                                1
+                            ]
+                        },
+                        {
+                            "oolType": "Validator",
+                            "name": "max",
+                            "args": [
+                                5
+                            ]
+                        }
+                    ]
+                },
+                "comment": {
+                    "name": "comment",
+                    "type": "text"
+                }
+            },
+            "associations": [
+                {
+                    "type": "belongsTo",
+                    "destEntity": "service"
+                },
+                {
+                    "type": "hasMany",
+                    "destEntity": "reviewReply",
+                    "srcField": "replies",
+                    "optional": true
+                }
+            ]
+        },
+        "reviewReply": {
+            "features": [
+                "autoId",
+                "createTimestamp"
+            ],
+            "fields": {
+                "replyContent": {
+                    "name": "replyContent",
+                    "type": "text"
+                }
+            },
+            "associations": [
+                {
+                    "type": "belongsTo",
+                    "destEntity": "serviceReview",
+                    "srcField": "reviewTopic"
+                },
+                {
+                    "type": "belongsTo",
+                    "destEntity": "reviewReply",
+                    "srcField": "parentReply",
+                    "optional": true
+                }
+            ]
+        },
+        "serviceLevel": {
+            "base": "dictionary",
+            "data": [
+                {
+                    "code": "S",
+                    "name": "Standard",
+                    "desc": "Service performed by AI"
+                },
+                {
+                    "code": "I",
+                    "name": "Insured",
+                    "desc": "Service performed by AI and insured by solicitors"
+                },
+                {
+                    "code": "P",
+                    "name": "Premium",
+                    "desc": "Service performed by both AI and solicitors, and insured by solicitors"
+                }
+            ]
+        },
+        "servicePrice": {
+            "base": "timebound",
+            "features": [
+                "autoId"
+            ],
+            "fields": {
+                "unit": {
+                    "name": "unit",
+                    "type": "text",
+                    "maxLength": [
+                        20
+                    ]
+                },
+                "quantity": {
+                    "name": "quantity",
+                    "type": "integer"
+                },
+                "amount": {
+                    "name": "amount",
+                    "type": "money"
+                },
+                "desc": {
+                    "name": "desc",
+                    "type": "desc"
+                }
+            },
+            "associations": [
+                {
+                    "type": "belongsTo",
+                    "destEntity": "service"
+                },
+                {
+                    "type": "belongsTo",
+                    "destEntity": "service",
+                    "srcField": "servicePackage",
+                    "optional": true
+                },
+                {
+                    "type": "refersTo",
+                    "destEntity": "serviceLevel"
+                },
+                {
+                    "type": "hasMany",
+                    "destEntity": "servicePromotion",
+                    "srcField": "promotions",
+                    "optional": true
+                }
+            ],
+            "data": [
+                {
+                    "service": {
+                        "oolType": "ConstReference",
+                        "name": "ServiceConveyancingVendor"
+                    },
+                    "serviceLevel": "S",
+                    "unit": "case(s)",
+                    "quantity": 1,
+                    "amount": 330
+                },
+                {
+                    "service": {
+                        "oolType": "ConstReference",
+                        "name": "ServiceConveyancingVendor"
+                    },
+                    "serviceLevel": "I",
+                    "unit": "case(s)",
+                    "quantity": 1,
+                    "amount": 770
+                },
+                {
+                    "service": {
+                        "oolType": "ConstReference",
+                        "name": "ServiceConveyancingVendor"
+                    },
+                    "serviceLevel": "P",
+                    "unit": "case(s)",
+                    "quantity": 1,
+                    "amount": 1100
+                },
+                {
+                    "service": {
+                        "oolType": "ConstReference",
+                        "name": "ServiceConveyancingPurchaser"
+                    },
+                    "serviceLevel": "S",
+                    "unit": "case(s)",
+                    "quantity": 1,
+                    "amount": 330
+                },
+                {
+                    "service": {
+                        "oolType": "ConstReference",
+                        "name": "ServiceConveyancingPurchaser"
+                    },
+                    "serviceLevel": "I",
+                    "unit": "case(s)",
+                    "quantity": 1,
+                    "amount": 770
+                },
+                {
+                    "service": {
+                        "oolType": "ConstReference",
+                        "name": "ServiceConveyancingPurchaser"
+                    },
+                    "serviceLevel": "P",
+                    "unit": "case(s)",
+                    "quantity": 1,
+                    "amount": 1100
+                }
+            ]
+        },
+        "discountType": {
+            "base": "dictionary",
+            "data": [
+                {
+                    "code": "P",
+                    "name": "Percentage"
+                },
+                {
+                    "code": "D",
+                    "name": "Deduction"
+                },
+                {
+                    "code": "N",
+                    "name": "New Price"
+                },
+                {
+                    "code": "F",
+                    "name": "Free"
+                }
+            ]
+        },
+        "servicePromotion": {
+            "base": "timebound",
+            "features": [
+                "autoId"
+            ],
+            "fields": {
+                "name": {
+                    "name": "name",
+                    "type": "name"
+                },
+                "desc": {
+                    "name": "desc",
+                    "type": "text",
+                    "optional": true
+                },
+                "discountAmount": {
+                    "name": "discountAmount",
+                    "type": "number",
+                    "optional": true
+                }
+            },
+            "associations": [
+                {
+                    "type": "belongsTo",
+                    "destEntity": "servicePrice",
+                    "srcField": "price"
+                },
+                {
+                    "type": "refersTo",
+                    "destEntity": "discountType"
+                }
+            ]
+        }
+    },
+    "id": "./entities/service.ool",
+    "name": "service"
+}

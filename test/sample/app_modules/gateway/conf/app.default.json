@@ -1,0 +1,56 @@
+{
+    "dataSource": {
+        "mysql": {
+            "levoFoundation": {
+                "connection": "mysql://root:root@localhost/levo-fnd",
+                "logSQLStatement": true
+            }
+        }
+    },       
+    "oolong": {
+        "modelDir": "server/models",
+        "dslSourceDir": "oolong",
+        "dslReverseOutputDir": "oolong",
+        "modelOutputDir": "src/models",
+        "scriptSourceDir": "server/scripts",
+        "scriptOutputDir": "src/scripts",        
+        "useJsonSource": false,
+        "saveIntermediate": true,
+        "schemaDeployment": { 
+            "levo-foundation": {
+                "dataSource": "mysql.levoFoundation"
+            }
+        }
+    },
+    "middlewares": {        
+        "session": {
+            "store": {
+                "type": "memory"
+            }
+        },
+        "koa-body": {},        
+        "methodOverride": {}
+    },
+    "routing": {    
+        "/api": {
+            "gateway": {
+                "schemaName": "levo-foundation",
+                "entityModels": {
+                    "service": {},
+                    "serviceCategory": {},
+                    "servicePrice": {},
+                    "servicePromotion": {},
+                    "serviceLevel": {},
+                    "serviceReview": {},
+                    "discountType": {},
+                    "reviewReply": {},
+                    "robot": {},
+                    "gender": {},
+                    "robotContact": {},
+                    "contactType": {},
+                    "supplier": {}
+                }
+            }
+        }
+    }
+}

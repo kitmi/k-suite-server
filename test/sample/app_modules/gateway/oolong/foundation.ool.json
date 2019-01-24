@@ -1,0 +1,55 @@
+{
+    "namespace": [
+        "/Users/rockieguo/Documents/GitHub/k-suite/packages/server/test/sample/app_modules/gateway/oolong/entities/common.ool",
+        "/Users/rockieguo/Documents/GitHub/k-suite/packages/server/test/sample/app_modules/gateway/oolong/entities/organization.ool",
+        "/Users/rockieguo/Documents/GitHub/k-suite/packages/server/test/sample/app_modules/gateway/oolong/entities/profile.ool",
+        "/Users/rockieguo/Documents/GitHub/k-suite/packages/server/test/sample/app_modules/gateway/oolong/entities/service.ool"
+    ],
+    "schema": {
+        "levo-foundation": {
+            "entities": [
+                {
+                    "entity": "service"
+                },
+                {
+                    "entity": "serviceCategory"
+                },
+                {
+                    "entity": "servicePrice"
+                },
+                {
+                    "entity": "servicePromotion"
+                },
+                {
+                    "entity": "serviceLevel"
+                },
+                {
+                    "entity": "serviceReview"
+                },
+                {
+                    "entity": "discountType"
+                },
+                {
+                    "entity": "reviewReply"
+                },
+                {
+                    "entity": "robot"
+                },
+                {
+                    "entity": "gender"
+                },
+                {
+                    "entity": "robotContact"
+                },
+                {
+                    "entity": "contactType"
+                },
+                {
+                    "entity": "supplier"
+                }
+            ]
+        }
+    },
+    "id": "./foundation.ool",
+    "name": "foundation"
+}

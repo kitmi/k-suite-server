@@ -1,0 +1,12 @@
+"use strict";
+
+require("source-map-support/register");
+
+const commonViewState = require('../common/viewState');
+
+exports.index = async ctx => {
+  await ctx.render("home-index", {
+    title: `${commonViewState.appTitle} - Home`
+  });
+};
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIi4uLy4uL3NyYy9jb250cm9sbGVycy9ob21lLmpzIl0sIm5hbWVzIjpbImNvbW1vblZpZXdTdGF0ZSIsInJlcXVpcmUiLCJleHBvcnRzIiwiaW5kZXgiLCJjdHgiLCJyZW5kZXIiLCJ0aXRsZSIsImFwcFRpdGxlIl0sIm1hcHBpbmdzIjoiQUFBQTs7OztBQUVBLE1BQU1BLGVBQWUsR0FBR0MsT0FBTyxDQUFDLHFCQUFELENBQS9COztBQUVBQyxPQUFPLENBQUNDLEtBQVIsR0FBZ0IsTUFBTUMsR0FBTixJQUFhO0FBQzNCLFFBQU1BLEdBQUcsQ0FBQ0MsTUFBSixDQUFXLFlBQVgsRUFBeUI7QUFDN0JDLElBQUFBLEtBQUssRUFBRyxHQUFFTixlQUFlLENBQUNPLFFBQVM7QUFETixHQUF6QixDQUFOO0FBR0QsQ0FKRCIsInNvdXJjZXNDb250ZW50IjpbIlwidXNlIHN0cmljdFwiO1xuXG5jb25zdCBjb21tb25WaWV3U3RhdGUgPSByZXF1aXJlKCcuLi9jb21tb24vdmlld1N0YXRlJyk7XG5cbmV4cG9ydHMuaW5kZXggPSBhc3luYyBjdHggPT4ge1xuICBhd2FpdCBjdHgucmVuZGVyKFwiaG9tZS1pbmRleFwiLCB7XG4gICAgdGl0bGU6IGAke2NvbW1vblZpZXdTdGF0ZS5hcHBUaXRsZX0gLSBIb21lYFxuICB9KTtcbn07Il19

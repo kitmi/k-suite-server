@@ -1,0 +1,55 @@
+{
+    "namespace": [
+        "/Users/rockieguo/Documents/GitHub/k-suite/packages/oolong/lib/lang/builtins/types.ool"
+    ],
+    "constant": {
+        "SupplierLevo": 1000
+    },
+    "entity": {
+        "supplier": {
+            "features": [
+                {
+                    "name": "autoId",
+                    "args": [
+                        {
+                            "startFrom": 1001
+                        }
+                    ]
+                },
+                "logicalDeletion"
+            ],
+            "fields": {
+                "name": {
+                    "name": "name",
+                    "type": "name"
+                },
+                "legalName": {
+                    "name": "legalName",
+                    "type": "text",
+                    "maxLength": [
+                        100
+                    ]
+                }
+            },
+            "associations": [
+                {
+                    "type": "hasMany",
+                    "destEntity": "service",
+                    "srcField": "services"
+                }
+            ],
+            "data": [
+                {
+                    "id": {
+                        "oolType": "ConstReference",
+                        "name": "SupplierLevo"
+                    },
+                    "name": "LEVO Technology",
+                    "legalName": "LEVO TECHNOLOGY PTY LTD"
+                }
+            ]
+        }
+    },
+    "id": "./entities/organization.ool",
+    "name": "organization"
+}

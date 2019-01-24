@@ -1,0 +1,19 @@
+import 'entities/**'
+
+schema 'levo-foundation'
+  entities
+    service
+    serviceCategory
+    servicePrice
+    servicePromotion
+    serviceLevel
+    serviceReview
+    discountType
+    reviewReply
+    robot
+    gender
+    robotContact
+    contactType    
+    supplier
+    
+

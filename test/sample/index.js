@@ -6,7 +6,8 @@ const webServer = new WebServer('LEVO', startEnv === 'development' ? {
     logger: {
         level: 'debug'
     },
-    logWithAppName: true
+    logWithAppName: true,
+    traceMiddlewares: true
 } : {});
 
 webServer.start_().then(() => {

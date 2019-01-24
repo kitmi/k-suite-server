@@ -23,7 +23,12 @@
         "compress": {},
         "etag": {}
     },
-    "appRouting": {                
+    "appRouting": {  
+        "/gateway": {
+            "name": "gateway",
+            "options": {
+            }
+        },              
         "/": {
             "name": "sso",
             "options": {

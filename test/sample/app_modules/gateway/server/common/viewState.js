@@ -1,0 +1,8 @@
+"use strict";
+
+require("source-map-support/register");
+
+module.exports = {
+  appTitle: 'Sample SSO'
+};
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIi4uLy4uL3NyYy9jb21tb24vdmlld1N0YXRlLmpzIl0sIm5hbWVzIjpbIm1vZHVsZSIsImV4cG9ydHMiLCJhcHBUaXRsZSJdLCJtYXBwaW5ncyI6Ijs7OztBQUFBQSxNQUFNLENBQUNDLE9BQVAsR0FBaUI7QUFDYkMsRUFBQUEsUUFBUSxFQUFFO0FBREcsQ0FBakIiLCJzb3VyY2VzQ29udGVudCI6WyJtb2R1bGUuZXhwb3J0cyA9IHtcbiAgICBhcHBUaXRsZTogJ1NhbXBsZSBTU08nXG59OyJdfQ==

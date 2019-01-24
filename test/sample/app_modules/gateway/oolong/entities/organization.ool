@@ -1,0 +1,21 @@
+import '<oolong>/types'
+
+const
+  SupplierLevo = 1000
+
+entity supplier
+  with
+    autoId({ startFrom: 1001 })
+    logicalDeletion
+
+  has
+    name
+    legalName : text maxLength(100)
+
+  associations
+    hasMany service as services  
+
+  data [
+      { id: SupplierLevo, name: 'LEVO Technology', legalName: 'LEVO TECHNOLOGY PTY LTD' }
+  ]
+

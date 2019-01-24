@@ -46,8 +46,6 @@ module.exports = (app, baseRoute, options) => {
         app.useMiddlewares(router, options.middlewares);
     }
 
-    router.use((ctx, next) => { ctx.type = 'application/json'; return next(); });
-
     let resourcesPath = path.join(resourcePath, "**", "*.js");
     let files = Util.glob.sync(resourcesPath, {nodir: true});
 
