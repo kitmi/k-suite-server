@@ -63,195 +63,211 @@ module.exports = (db, BaseEntityModel) => {
 
     RobotSpec.db = db;
     RobotSpec.meta = {
-    "schemaName": "levoFoundation",
-    "name": "robot",
-    "keyField": "code",
-    "fields": {
-        "code": {
-            "type": "text",
-            "maxLength": 20,
-            "subClass": [
+        "schemaName": "levoFoundation",
+        "name": "robot",
+        "keyField": "code",
+        "fields": {
+            "code": {
+                "type": "text",
+                "maxLength": 20,
+                "subClass": [
+                    "code"
+                ],
+                "displayName": "Code",
+                "createByDb": true
+            },
+            "introduction": {
+                "type": "text",
+                "displayName": "Introduction"
+            },
+            "voiceScript": {
+                "type": "text",
+                "displayName": "Voice Script"
+            },
+            "avatar": {
+                "type": "text",
+                "maxLength": 2000,
+                "modifiers": [
+                    {
+                        "oolType": "Validator",
+                        "name": "isURL"
+                    }
+                ],
+                "subClass": [
+                    "url"
+                ],
+                "displayName": "Avatar",
+                "createByDb": true
+            },
+            "images": {
+                "type": "array",
+                "optional": true,
+                "displayName": "Images"
+            },
+            "video": {
+                "type": "text",
+                "maxLength": 2000,
+                "optional": true,
+                "modifiers": [
+                    {
+                        "oolType": "Validator",
+                        "name": "isURL"
+                    }
+                ],
+                "subClass": [
+                    "url"
+                ],
+                "displayName": "Video"
+            },
+            "voice": {
+                "type": "text",
+                "maxLength": 2000,
+                "optional": true,
+                "modifiers": [
+                    {
+                        "oolType": "Validator",
+                        "name": "isURL"
+                    }
+                ],
+                "subClass": [
+                    "url"
+                ],
+                "displayName": "Voice"
+            },
+            "email": {
+                "type": "text",
+                "maxLength": 200,
+                "modifiers": [
+                    {
+                        "oolType": "Validator",
+                        "name": "isEmail"
+                    }
+                ],
+                "subClass": [
+                    "email"
+                ],
+                "displayName": "Email",
+                "createByDb": true
+            },
+            "firstname": {
+                "type": "text",
+                "maxLength": 40,
+                "subClass": [
+                    "name"
+                ],
+                "displayName": "Firstname",
+                "createByDb": true
+            },
+            "lastname": {
+                "type": "text",
+                "maxLength": 40,
+                "subClass": [
+                    "name"
+                ],
+                "displayName": "Lastname",
+                "createByDb": true
+            },
+            "nickname": {
+                "type": "text",
+                "maxLength": 40,
+                "subClass": [
+                    "name"
+                ],
+                "displayName": "Nickname",
+                "createByDb": true
+            },
+            "expertTitle": {
+                "type": "text",
+                "maxLength": 40,
+                "subClass": [
+                    "name"
+                ],
+                "displayName": "Expert Title",
+                "createByDb": true
+            },
+            "address": {
+                "type": "text",
+                "maxLength": 200,
+                "displayName": "Address",
+                "createByDb": true
+            },
+            "createdAt": {
+                "type": "datetime",
+                "auto": true,
+                "readOnly": true,
+                "writeOnce": true,
+                "displayName": "Created At",
+                "isCreateTimestamp": true,
+                "createByDb": true
+            },
+            "updatedAt": {
+                "type": "datetime",
+                "readOnly": true,
+                "forceUpdate": true,
+                "optional": true,
+                "displayName": "Updated At",
+                "isUpdateTimestamp": true,
+                "updateByDb": true
+            },
+            "isDeleted": {
+                "type": "boolean",
+                "default": false,
+                "readOnly": true,
+                "displayName": "Is Deleted"
+            },
+            "service": {
+                "type": "integer",
+                "displayName": "serviceId",
+                "createByDb": true
+            },
+            "gender": {
+                "type": "text",
+                "maxLength": 20,
+                "subClass": [
+                    "code"
+                ],
+                "displayName": "genderCode",
+                "createByDb": true
+            }
+        },
+        "features": {
+            "createTimestamp": {
+                "field": "createdAt"
+            },
+            "updateTimestamp": {
+                "field": "updatedAt"
+            },
+            "logicalDeletion": {
+                "field": "isDeleted",
+                "value": true
+            }
+        },
+        "uniqueKeys": [
+            [
                 "code"
-            ],
-            "displayName": "Code",
-            "createByDb": true
+            ]
+        ],
+        "associations": {
+            "service": {
+                "entity": "service",
+                "isList": false
+            },
+            "gender": {
+                "entity": "gender",
+                "isList": false
+            },
+            "contacts": {
+                "entity": "robotContact",
+                "isList": true,
+                "remoteField": "robot"
+            }
         },
-        "introduction": {
-            "type": "text",
-            "displayName": "Introduction"
-        },
-        "voiceScript": {
-            "type": "text",
-            "displayName": "Voice Script"
-        },
-        "avatar": {
-            "type": "text",
-            "maxLength": 2000,
-            "modifiers": [
-                {
-                    "oolType": "Validator",
-                    "name": "isURL"
-                }
-            ],
-            "subClass": [
-                "url"
-            ],
-            "displayName": "Avatar",
-            "createByDb": true
-        },
-        "images": {
-            "type": "array",
-            "optional": true,
-            "displayName": "Images"
-        },
-        "video": {
-            "type": "text",
-            "maxLength": 2000,
-            "optional": true,
-            "modifiers": [
-                {
-                    "oolType": "Validator",
-                    "name": "isURL"
-                }
-            ],
-            "subClass": [
-                "url"
-            ],
-            "displayName": "Video"
-        },
-        "voice": {
-            "type": "text",
-            "maxLength": 2000,
-            "optional": true,
-            "modifiers": [
-                {
-                    "oolType": "Validator",
-                    "name": "isURL"
-                }
-            ],
-            "subClass": [
-                "url"
-            ],
-            "displayName": "Voice"
-        },
-        "email": {
-            "type": "text",
-            "maxLength": 200,
-            "modifiers": [
-                {
-                    "oolType": "Validator",
-                    "name": "isEmail"
-                }
-            ],
-            "subClass": [
-                "email"
-            ],
-            "displayName": "Email",
-            "createByDb": true
-        },
-        "firstname": {
-            "type": "text",
-            "maxLength": 40,
-            "subClass": [
-                "name"
-            ],
-            "displayName": "Firstname",
-            "createByDb": true
-        },
-        "lastname": {
-            "type": "text",
-            "maxLength": 40,
-            "subClass": [
-                "name"
-            ],
-            "displayName": "Lastname",
-            "createByDb": true
-        },
-        "nickname": {
-            "type": "text",
-            "maxLength": 40,
-            "subClass": [
-                "name"
-            ],
-            "displayName": "Nickname",
-            "createByDb": true
-        },
-        "expertTitle": {
-            "type": "text",
-            "maxLength": 40,
-            "subClass": [
-                "name"
-            ],
-            "displayName": "Expert Title",
-            "createByDb": true
-        },
-        "address": {
-            "type": "text",
-            "maxLength": 200,
-            "displayName": "Address",
-            "createByDb": true
-        },
-        "createdAt": {
-            "type": "datetime",
-            "auto": true,
-            "readOnly": true,
-            "writeOnce": true,
-            "displayName": "Created At",
-            "isCreateTimestamp": true,
-            "createByDb": true
-        },
-        "updatedAt": {
-            "type": "datetime",
-            "readOnly": true,
-            "forceUpdate": true,
-            "optional": true,
-            "displayName": "Updated At",
-            "isUpdateTimestamp": true,
-            "updateByDb": true
-        },
-        "isDeleted": {
-            "type": "boolean",
-            "default": false,
-            "readOnly": true,
-            "displayName": "Is Deleted"
-        },
-        "service": {
-            "type": "integer",
-            "auto": true,
-            "writeOnce": true,
-            "startFrom": 10002,
-            "displayName": "Id"
-        },
-        "gender": {
-            "type": "text",
-            "maxLength": 20,
-            "subClass": [
-                "code"
-            ],
-            "displayName": "Code",
-            "createByDb": true
+        "fieldDependencies": {
+            "createdAt": [
+                "createdAt"
+            ]
         }
-    },
-    "indexes": [],
-    "features": {
-        "createTimestamp": {
-            "field": "createdAt"
-        },
-        "updateTimestamp": {
-            "field": "updatedAt"
-        },
-        "logicalDeletion": {
-            "field": "isDeleted",
-            "value": true
-        }
-    },
-    "uniqueKeys": [
-        [
-            "code"
-        ]
-    ],
-    "fieldDependencies": {}
-};
+    };
 
-    return Object.assign(RobotSpec, );
+    return Object.assign(RobotSpec, {});
 };

@@ -36,79 +36,94 @@ module.exports = (db, BaseEntityModel) => {
 
     ServiceReviewSpec.db = db;
     ServiceReviewSpec.meta = {
-    "schemaName": "levoFoundation",
-    "name": "serviceReview",
-    "keyField": "id",
-    "fields": {
-        "id": {
-            "type": "integer",
-            "auto": true,
-            "writeOnce": true,
-            "displayName": "Id",
-            "autoIncrementId": true,
-            "createByDb": true
+        "schemaName": "levoFoundation",
+        "name": "serviceReview",
+        "keyField": "id",
+        "fields": {
+            "id": {
+                "type": "integer",
+                "auto": true,
+                "writeOnce": true,
+                "displayName": "Id",
+                "autoIncrementId": true,
+                "createByDb": true
+            },
+            "rating": {
+                "type": "integer",
+                "digits": 1,
+                "optional": true,
+                "modifiers": [
+                    {
+                        "oolType": "Validator",
+                        "name": "min",
+                        "args": [
+                            1
+                        ]
+                    },
+                    {
+                        "oolType": "Validator",
+                        "name": "max",
+                        "args": [
+                            5
+                        ]
+                    }
+                ],
+                "displayName": "Rating"
+            },
+            "comment": {
+                "type": "text",
+                "displayName": "Comment"
+            },
+            "createdAt": {
+                "type": "datetime",
+                "auto": true,
+                "readOnly": true,
+                "writeOnce": true,
+                "displayName": "Created At",
+                "isCreateTimestamp": true,
+                "createByDb": true
+            },
+            "service": {
+                "type": "integer",
+                "displayName": "serviceId",
+                "createByDb": true
+            }
         },
-        "rating": {
-            "type": "integer",
-            "digits": 1,
-            "optional": true,
-            "modifiers": [
-                {
-                    "oolType": "Validator",
-                    "name": "min",
-                    "args": [
-                        1
-                    ]
-                },
-                {
-                    "oolType": "Validator",
-                    "name": "max",
-                    "args": [
-                        5
-                    ]
-                }
+        "features": {
+            "autoId": {
+                "field": "id"
+            },
+            "createTimestamp": {
+                "field": "createdAt"
+            }
+        },
+        "uniqueKeys": [
+            [
+                "id"
+            ]
+        ],
+        "associations": {
+            "service": {
+                "entity": "service",
+                "isList": false
+            },
+            "replies": {
+                "entity": "reviewReply",
+                "isList": true,
+                "remoteField": "reviewTopic",
+                "optional": true
+            }
+        },
+        "fieldDependencies": {
+            "id": [
+                "id"
             ],
-            "displayName": "Rating"
-        },
-        "comment": {
-            "type": "text",
-            "displayName": "Comment"
-        },
-        "createdAt": {
-            "type": "datetime",
-            "auto": true,
-            "readOnly": true,
-            "writeOnce": true,
-            "displayName": "Created At",
-            "isCreateTimestamp": true,
-            "createByDb": true
-        },
-        "service": {
-            "type": "integer",
-            "auto": true,
-            "writeOnce": true,
-            "startFrom": 10002,
-            "displayName": "Id"
+            "createdAt": [
+                "createdAt"
+            ],
+            "rating": []
         }
-    },
-    "indexes": [],
-    "features": {
-        "autoId": {
-            "field": "id"
-        },
-        "createTimestamp": {
-            "field": "createdAt"
-        }
-    },
-    "uniqueKeys": [
-        [
-            "id"
-        ]
-    ],
-    "fieldDependencies": {
-        "rating": []
-    }
-};
+    };
 
-    return Object.assign(ServiceReviewSpec, );
+    return Object.assign(ServiceReviewSpec, {});
 };

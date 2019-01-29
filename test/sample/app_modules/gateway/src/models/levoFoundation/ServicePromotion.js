@@ -27,84 +27,96 @@ module.exports = (db, BaseEntityModel) => {
 
     ServicePromotionSpec.db = db;
     ServicePromotionSpec.meta = {
-    "schemaName": "levoFoundation",
-    "name": "servicePromotion",
-    "keyField": "id",
-    "fields": {
-        "startDate": {
-            "type": "datetime",
-            "default": {
-                "oolType": "SymbolToken",
-                "name": "now"
+        "schemaName": "levoFoundation",
+        "name": "servicePromotion",
+        "keyField": "id",
+        "fields": {
+            "startDate": {
+                "type": "datetime",
+                "default": {
+                    "oolType": "SymbolToken",
+                    "name": "now"
+                },
+                "displayName": "Start Date"
             },
-            "displayName": "Start Date"
+            "endDate": {
+                "type": "datetime",
+                "optional": true,
+                "displayName": "End Date"
+            },
+            "isValid": {
+                "type": "boolean",
+                "displayName": "Is Valid",
+                "createByDb": true
+            },
+            "id": {
+                "type": "integer",
+                "auto": true,
+                "writeOnce": true,
+                "displayName": "Id",
+                "autoIncrementId": true,
+                "createByDb": true
+            },
+            "name": {
+                "type": "text",
+                "maxLength": 40,
+                "subClass": [
+                    "name"
+                ],
+                "displayName": "Name",
+                "createByDb": true
+            },
+            "desc": {
+                "type": "text",
+                "optional": true,
+                "displayName": "Desc"
+            },
+            "discountAmount": {
+                "type": "number",
+                "optional": true,
+                "displayName": "Discount Amount"
+            },
+            "price": {
+                "type": "integer",
+                "displayName": "servicePriceId",
+                "createByDb": true
+            },
+            "discountType": {
+                "type": "text",
+                "maxLength": 20,
+                "subClass": [
+                    "code"
+                ],
+                "displayName": "discountTypeCode",
+                "createByDb": true
+            }
         },
-        "endDate": {
-            "type": "datetime",
-            "optional": true,
-            "displayName": "End Date"
+        "features": {
+            "autoId": {
+                "field": "id"
+            }
         },
-        "isValid": {
-            "type": "boolean",
-            "displayName": "Is Valid",
-            "createByDb": true
+        "uniqueKeys": [
+            [
+                "id"
+            ]
+        ],
+        "associations": {
+            "price": {
+                "entity": "servicePrice",
+                "isList": false
+            },
+            "discountType": {
+                "entity": "discountType",
+                "isList": false
+            }
         },
-        "id": {
-            "type": "integer",
-            "auto": true,
-            "writeOnce": true,
-            "displayName": "Id",
-            "autoIncrementId": true,
-            "createByDb": true
-        },
-        "name": {
-            "type": "text",
-            "maxLength": 40,
-            "subClass": [
-                "name"
-            ],
-            "displayName": "Name",
-            "createByDb": true
-        },
-        "desc": {
-            "type": "text",
-            "optional": true,
-            "displayName": "Desc"
-        },
-        "discountAmount": {
-            "type": "number",
-            "optional": true,
-            "displayName": "Discount Amount"
-        },
-        "price": {
-            "type": "integer",
-            "auto": true,
-            "writeOnce": true,
-            "displayName": "Id"
-        },
-        "discountType": {
-            "type": "text",
-            "maxLength": 20,
-            "subClass": [
-                "code"
-            ],
-            "displayName": "Code",
-            "createByDb": true
+        "fieldDependencies": {
+            "id": [
+                "id"
+            ]
         }
-    },
-    "indexes": [],
-    "features": {
-        "autoId": {
-            "field": "id"
-        }
-    },
-    "uniqueKeys": [
-        [
-            "id"
-        ]
-    ],
-    "fieldDependencies": {}
-};
+    };
 
-    return Object.assign(ServicePromotionSpec, );
+    return Object.assign(ServicePromotionSpec, {});
 };

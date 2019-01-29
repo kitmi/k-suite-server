@@ -11,7 +11,7 @@ CREATE TABLE IF NOT EXISTS `service` (
   `updatedAt` DATETIME NULL ON UPDATE CURRENT_TIMESTAMP,
   `isDeleted` TINYINT(1) NOT NULL,
   `category` VARCHAR(20) NOT NULL DEFAULT "",
-  `supplier` INT NOT NULL,
+  `supplier` INT NOT NULL DEFAULT 0,
   `parentService` INT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY (`name`)
@@ -35,8 +35,7 @@ CREATE TABLE IF NOT EXISTS `servicePrice` (
   `quantity` INT NOT NULL DEFAULT 0,
   `amount` FLOAT NOT NULL DEFAULT 0,
   `desc` TEXT NULL,
-  `service` INT NOT NULL,
-  `servicePackage` INT NULL,
+  `service` INT NOT NULL DEFAULT 0,
   `serviceLevel` VARCHAR(20) NOT NULL DEFAULT "",
   PRIMARY KEY (`id`)
 );
@@ -49,7 +48,7 @@ CREATE TABLE IF NOT EXISTS `servicePromotion` (
   `name` VARCHAR(40) NOT NULL DEFAULT "",
   `desc` TEXT NULL,
   `discountAmount` FLOAT NULL,
-  `price` INT NOT NULL,
+  `price` INT NOT NULL DEFAULT 0,
   `discountType` VARCHAR(20) NOT NULL DEFAULT "",
   PRIMARY KEY (`id`)
 );
@@ -67,7 +66,7 @@ CREATE TABLE IF NOT EXISTS `serviceReview` (
   `rating` TINYINT(1) NULL,
   `comment` TEXT NOT NULL,
   `createdAt` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `service` INT NOT NULL,
+  `service` INT NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`)
 );
 
@@ -83,7 +82,7 @@ CREATE TABLE IF NOT EXISTS `reviewReply` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `replyContent` TEXT NOT NULL,
   `createdAt` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `reviewTopic` INT NOT NULL,
+  `reviewTopic` INT NOT NULL DEFAULT 0,
   `parentReply` INT NULL,
   PRIMARY KEY (`id`)
 );
@@ -105,7 +104,7 @@ CREATE TABLE IF NOT EXISTS `robot` (
   `createdAt` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `updatedAt` DATETIME NULL ON UPDATE CURRENT_TIMESTAMP,
   `isDeleted` TINYINT(1) NOT NULL,
-  `service` INT NOT NULL,
+  `service` INT NOT NULL DEFAULT 0,
   `gender` VARCHAR(20) NOT NULL DEFAULT "",
   PRIMARY KEY (`code`)
 );
@@ -126,7 +125,8 @@ CREATE TABLE IF NOT EXISTS `robotContact` (
   `isDeleted` TINYINT(1) NOT NULL,
   `robot` VARCHAR(20) NOT NULL DEFAULT "",
   `type` VARCHAR(20) NOT NULL DEFAULT "",
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  UNIQUE KEY (`robot`, `type`)
 );
 
 CREATE TABLE IF NOT EXISTS `contactType` (

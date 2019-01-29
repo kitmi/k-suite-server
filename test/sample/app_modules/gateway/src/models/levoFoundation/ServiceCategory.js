@@ -27,64 +27,70 @@ module.exports = (db, BaseEntityModel) => {
 
     ServiceCategorySpec.db = db;
     ServiceCategorySpec.meta = {
-    "schemaName": "levoFoundation",
-    "name": "serviceCategory",
-    "keyField": "code",
-    "fields": {
-        "code": {
-            "type": "text",
-            "maxLength": 20,
-            "subClass": [
+        "schemaName": "levoFoundation",
+        "name": "serviceCategory",
+        "keyField": "code",
+        "fields": {
+            "code": {
+                "type": "text",
+                "maxLength": 20,
+                "subClass": [
+                    "code"
+                ],
+                "displayName": "Code",
+                "createByDb": true
+            },
+            "name": {
+                "type": "text",
+                "maxLength": 100,
+                "displayName": "Name",
+                "createByDb": true
+            },
+            "desc": {
+                "type": "text",
+                "optional": true,
+                "subClass": [
+                    "desc"
+                ],
+                "displayName": "Desc"
+            },
+            "isDeleted": {
+                "type": "boolean",
+                "default": false,
+                "readOnly": true,
+                "displayName": "Is Deleted"
+            }
+        },
+        "features": {
+            "logicalDeletion": {
+                "field": "isDeleted",
+                "value": true
+            }
+        },
+        "uniqueKeys": [
+            [
                 "code"
             ],
-            "displayName": "Code",
-            "createByDb": true
-        },
-        "name": {
-            "type": "text",
-            "maxLength": 100,
-            "displayName": "Name",
-            "createByDb": true
-        },
-        "desc": {
-            "type": "text",
-            "optional": true,
-            "subClass": [
-                "desc"
-            ],
-            "displayName": "Desc"
-        },
-        "isDeleted": {
-            "type": "boolean",
-            "default": false,
-            "readOnly": true,
-            "displayName": "Is Deleted"
-        }
-    },
-    "indexes": [
-        {
-            "fields": [
+            [
                 "name"
-            ],
-            "unique": true
-        }
-    ],
-    "features": {
-        "logicalDeletion": {
-            "field": "isDeleted",
-            "value": true
-        }
-    },
-    "uniqueKeys": [
-        [
-            "code"
+            ]
         ],
-        [
-            "name"
-        ]
-    ],
-    "fieldDependencies": {}
-};
+        "indexes": [
+            {
+                "fields": [
+                    "name"
+                ],
+                "unique": true
+            }
+        ],
+        "associations": {
+            "services": {
+                "entity": "service",
+                "isList": true,
+                "remoteField": "category"
+            }
+        }
+    };
 
-    return Object.assign(ServiceCategorySpec, );
+    return Object.assign(ServiceCategorySpec, {});
 };

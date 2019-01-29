@@ -25,3 +25,5 @@ Thumbs.db
 ######################
 test/temp
 .nyc_output
+*.log
+**/*.log

@@ -324,6 +324,15 @@
                     "srcField": "type"
                 }
             ],
+            "indexes": [
+                {
+                    "fields": [
+                        "robot",
+                        "type"
+                    ],
+                    "unique": true
+                }
+            ],
             "data": [
                 {
                     "robot": "connie",
@@ -331,9 +340,19 @@
                     "info": "https://fb.com/connie.levo"
                 },
                 {
+                    "robot": "connie",
+                    "type": "email",
+                    "info": "connie.levo@levotech.com.au"
+                },
+                {
                     "robot": "vincent",
                     "type": "facebook",
                     "info": "https://fb.com/vincent.levo"
+                },
+                {
+                    "robot": "vincent",
+                    "type": "email",
+                    "info": "vincent.levo@levotech.com.au"
                 }
             ]
         },
@@ -354,6 +373,11 @@
                     "code": "mobile",
                     "name": "Mobile",
                     "desc": "Mobile number"
+                },
+                {
+                    "code": "email",
+                    "name": "Email",
+                    "desc": "Email address"
                 },
                 {
                     "code": "facebook",
@@ -490,12 +514,6 @@
                 {
                     "type": "belongsTo",
                     "destEntity": "service"
-                },
-                {
-                    "type": "belongsTo",
-                    "destEntity": "service",
-                    "srcField": "servicePackage",
-                    "optional": true
                 },
                 {
                     "type": "refersTo",

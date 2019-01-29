@@ -162,9 +162,9 @@ const Routable = T => class extends T {
         
         middlewareFunctions.forEach(({ name, middleware }) => {            
             if (Array.isArray(middleware)) {
-                middleware.forEach(m => this.useMiddleware(router, m));
+                middleware.forEach(m => this.useMiddleware(router, m, name));
             } else {
-                this.useMiddleware(router, middleware);
+                this.useMiddleware(router, middleware, name);
             }
 
             this.log('verbose', `Attached middleware [${name}].`);
@@ -324,8 +324,8 @@ const Routable = T => class extends T {
         };       
     }
 
-    useMiddleware(router, middleware) {          
-        router.use(this._wrapMiddlewareTracer(middleware));
+    useMiddleware(router, middleware, name) {          
+        router.use(this._wrapMiddlewareTracer(middleware, name));
     }
 
     _wrapMiddlewareTracer(middleware, name) {

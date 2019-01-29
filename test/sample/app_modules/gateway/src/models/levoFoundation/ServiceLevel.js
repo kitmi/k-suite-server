@@ -27,57 +27,55 @@ module.exports = (db, BaseEntityModel) => {
 
     ServiceLevelSpec.db = db;
     ServiceLevelSpec.meta = {
-    "schemaName": "levoFoundation",
-    "name": "serviceLevel",
-    "keyField": "code",
-    "fields": {
-        "code": {
-            "type": "text",
-            "maxLength": 20,
-            "subClass": [
+        "schemaName": "levoFoundation",
+        "name": "serviceLevel",
+        "keyField": "code",
+        "fields": {
+            "code": {
+                "type": "text",
+                "maxLength": 20,
+                "subClass": [
+                    "code"
+                ],
+                "displayName": "Code",
+                "createByDb": true
+            },
+            "name": {
+                "type": "text",
+                "maxLength": 40,
+                "subClass": [
+                    "name"
+                ],
+                "displayName": "Name",
+                "createByDb": true
+            },
+            "desc": {
+                "type": "text",
+                "optional": true,
+                "subClass": [
+                    "desc"
+                ],
+                "displayName": "Desc"
+            },
+            "isDeleted": {
+                "type": "boolean",
+                "default": false,
+                "readOnly": true,
+                "displayName": "Is Deleted"
+            }
+        },
+        "features": {
+            "logicalDeletion": {
+                "field": "isDeleted",
+                "value": true
+            }
+        },
+        "uniqueKeys": [
+            [
                 "code"
-            ],
-            "displayName": "Code",
-            "createByDb": true
-        },
-        "name": {
-            "type": "text",
-            "maxLength": 40,
-            "subClass": [
-                "name"
-            ],
-            "displayName": "Name",
-            "createByDb": true
-        },
-        "desc": {
-            "type": "text",
-            "optional": true,
-            "subClass": [
-                "desc"
-            ],
-            "displayName": "Desc"
-        },
-        "isDeleted": {
-            "type": "boolean",
-            "default": false,
-            "readOnly": true,
-            "displayName": "Is Deleted"
-        }
-    },
-    "indexes": [],
-    "features": {
-        "logicalDeletion": {
-            "field": "isDeleted",
-            "value": true
-        }
-    },
-    "uniqueKeys": [
-        [
-            "code"
+            ]
         ]
-    ],
-    "fieldDependencies": {}
-};
+    };
 
-    return Object.assign(ServiceLevelSpec, );
+    return Object.assign(ServiceLevelSpec, {});
 };

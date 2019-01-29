@@ -28,7 +28,8 @@
                 "type": "memory"
             }
         },
-        "koa-body": {},        
+        "bodyParser": {
+        },        
         "methodOverride": {}
     },
     "routing": {    

@@ -27,61 +27,80 @@ module.exports = (db, BaseEntityModel) => {
 
     ReviewReplySpec.db = db;
     ReviewReplySpec.meta = {
-    "schemaName": "levoFoundation",
-    "name": "reviewReply",
-    "keyField": "id",
-    "fields": {
-        "id": {
-            "type": "integer",
-            "auto": true,
-            "writeOnce": true,
-            "displayName": "Id",
-            "autoIncrementId": true,
-            "createByDb": true
+        "schemaName": "levoFoundation",
+        "name": "reviewReply",
+        "keyField": "id",
+        "fields": {
+            "id": {
+                "type": "integer",
+                "auto": true,
+                "writeOnce": true,
+                "displayName": "Id",
+                "autoIncrementId": true,
+                "createByDb": true
+            },
+            "replyContent": {
+                "type": "text",
+                "displayName": "Reply Content"
+            },
+            "createdAt": {
+                "type": "datetime",
+                "auto": true,
+                "readOnly": true,
+                "writeOnce": true,
+                "displayName": "Created At",
+                "isCreateTimestamp": true,
+                "createByDb": true
+            },
+            "reviewTopic": {
+                "type": "integer",
+                "displayName": "serviceReviewId",
+                "createByDb": true
+            },
+            "parentReply": {
+                "type": "integer",
+                "displayName": "reviewReplyId",
+                "optional": true
+            }
         },
-        "replyContent": {
-            "type": "text",
-            "displayName": "Reply Content"
+        "features": {
+            "autoId": {
+                "field": "id"
+            },
+            "createTimestamp": {
+                "field": "createdAt"
+            }
         },
-        "createdAt": {
-            "type": "datetime",
-            "auto": true,
-            "readOnly": true,
-            "writeOnce": true,
-            "displayName": "Created At",
-            "isCreateTimestamp": true,
-            "createByDb": true
+        "uniqueKeys": [
+            [
+                "id"
+            ]
+        ],
+        "associations": {
+            "reviewTopic": {
+                "entity": "serviceReview",
+                "isList": false
+            },
+            "parentReply": {
+                "entity": "reviewReply",
+                "isList": false,
+                "optional": true
+            },
+            "reviewReplies": {
+                "entity": "reviewReply",
+                "isList": true,
+                "remoteField": "parentReply"
+            }
         },
-        "reviewTopic": {
-            "type": "integer",
-            "auto": true,
-            "writeOnce": true,
-            "displayName": "Id"
-        },
-        "parentReply": {
-            "type": "integer",
-            "auto": true,
-            "writeOnce": true,
-            "displayName": "Id",
-            "optional": true
+        "fieldDependencies": {
+            "id": [
+                "id"
+            ],
+            "createdAt": [
+                "createdAt"
+            ]
         }
-    },
-    "indexes": [],
-    "features": {
-        "autoId": {
-            "field": "id"
-        },
-        "createTimestamp": {
-            "field": "createdAt"
-        }
-    },
-    "uniqueKeys": [
-        [
-            "id"
-        ]
-    ],
-    "fieldDependencies": {}
-};
+    };
 
-    return Object.assign(ReviewReplySpec, );
+    return Object.assign(ReviewReplySpec, {});
 };

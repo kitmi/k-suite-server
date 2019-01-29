@@ -27,58 +27,68 @@ module.exports = (db, BaseEntityModel) => {
 
     SupplierSpec.db = db;
     SupplierSpec.meta = {
-    "schemaName": "levoFoundation",
-    "name": "supplier",
-    "keyField": "id",
-    "fields": {
-        "id": {
-            "type": "integer",
-            "auto": true,
-            "writeOnce": true,
-            "startFrom": 1001,
-            "displayName": "Id",
-            "autoIncrementId": true,
-            "createByDb": true
+        "schemaName": "levoFoundation",
+        "name": "supplier",
+        "keyField": "id",
+        "fields": {
+            "id": {
+                "type": "integer",
+                "auto": true,
+                "writeOnce": true,
+                "startFrom": 1001,
+                "displayName": "Id",
+                "autoIncrementId": true,
+                "createByDb": true
+            },
+            "name": {
+                "type": "text",
+                "maxLength": 40,
+                "subClass": [
+                    "name"
+                ],
+                "displayName": "Name",
+                "createByDb": true
+            },
+            "legalName": {
+                "type": "text",
+                "maxLength": 100,
+                "displayName": "Legal Name",
+                "createByDb": true
+            },
+            "isDeleted": {
+                "type": "boolean",
+                "default": false,
+                "readOnly": true,
+                "displayName": "Is Deleted"
+            }
         },
-        "name": {
-            "type": "text",
-            "maxLength": 40,
-            "subClass": [
-                "name"
-            ],
-            "displayName": "Name",
-            "createByDb": true
+        "features": {
+            "autoId": {
+                "field": "id"
+            },
+            "logicalDeletion": {
+                "field": "isDeleted",
+                "value": true
+            }
         },
-        "legalName": {
-            "type": "text",
-            "maxLength": 100,
-            "displayName": "Legal Name",
-            "createByDb": true
+        "uniqueKeys": [
+            [
+                "id"
+            ]
+        ],
+        "associations": {
+            "services": {
+                "entity": "service",
+                "isList": true,
+                "remoteField": "supplier"
+            }
         },
-        "isDeleted": {
-            "type": "boolean",
-            "default": false,
-            "readOnly": true,
-            "displayName": "Is Deleted"
+        "fieldDependencies": {
+            "id": [
+                "id"
+            ]
         }
-    },
-    "indexes": [],
-    "features": {
-        "autoId": {
-            "field": "id"
-        },
-        "logicalDeletion": {
-            "field": "isDeleted",
-            "value": true
-        }
-    },
-    "uniqueKeys": [
-        [
-            "id"
-        ]
-    ],
-    "fieldDependencies": {}
-};
+    };
 
-    return Object.assign(SupplierSpec, );
+    return Object.assign(SupplierSpec, {});
 };

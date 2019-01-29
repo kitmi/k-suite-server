@@ -1,6 +1,6 @@
 "use strict";
 
-const { _, fs, eachAsync_, urlJoin } = require('rk-utils');
+const { _, fs, eachAsync_, urlJoin, getValueByPath } = require('rk-utils');
 const Router = require('koa-router');
 const HttpCode = require('http-status-codes');
 const { InvalidConfiguration, BadRequest } = require('../Errors');
@@ -54,7 +54,7 @@ module.exports = (app, baseRoute, options) => {
     
     let router = baseRoute === '/' ? new Router() : new Router({prefix: baseRoute});
 
-    app.useMiddleware(router, app.restApiWrapper());
+    app.useMiddleware(router, app.restApiWrapper(), 'restApiWrapper');
 
     if (options.middlewares) {
         app.useMiddlewares(router, options.middlewares);
@@ -74,35 +74,63 @@ module.exports = (app, baseRoute, options) => {
         
         await eachAsync_(entityModels, async (config, entityName) => {
             //todo: filter entity or methods by config
+            let entityNameInUrl = _.kebabCase(entityName);
 
-            list.push({ type: 'list', method: 'get', url: urlJoin(baseRoute, entityName) });
-            list.push({ type: 'detail', method: 'get', url: urlJoin(baseRoute, entityName, ':id') });
-            list.push({ type: 'create', method: 'post', url: urlJoin(baseRoute, entityName) });
-            list.push({ type: 'update', method: 'put', url: urlJoin(baseRoute, entityName, ':id') });
-            list.push({ type: 'delete', method: 'del', url: urlJoin(baseRoute, entityName, ':id') });
+            list.push({ type: 'list', method: 'get', url: urlJoin(baseRoute, entityNameInUrl) });
+            list.push({ type: 'detail', method: 'get', url: urlJoin(baseRoute, entityNameInUrl, ':id') });
+            list.push({ type: 'create', method: 'post', url: urlJoin(baseRoute, entityNameInUrl) });
+            list.push({ type: 'update', method: 'put', url: urlJoin(baseRoute, entityNameInUrl, ':id') });
+            list.push({ type: 'delete', method: 'del', url: urlJoin(baseRoute, entityNameInUrl, ':id') });
         });
 
-        ctx.body = list.join('\n');
+        ctx.body = list;
     });
 
-    app.addRoute(router, 'get', urlJoin(metadataEndpoint, ':entity'), async (ctx) => {
-        let entityName = ctx.params.entity;
-        if (!(entityName in entityModels)) {
-            throw new BadRequest('Invalid entity endpoint.');
-        }
+    if (app.env === 'development') {
+        app.addRoute(router, 'get', urlJoin(metadataEndpoint, ':entity'), async (ctx) => {
+            let entityName = ctx.params.entity;
+            if (!(entityName in entityModels)) {
+                throw new BadRequest('Invalid entity endpoint.');
+            }
 
-        let db = ctx.appModule.db(options.schemaName);
-        let EntityModel = db.model(entityName);
+            let db = ctx.appModule.db(options.schemaName);
+            let EntityModel = db.model(entityName);
+            let info = EntityModel.meta;
 
-        ctx.body = EntityModel.meta;
-    });
+            if (ctx.query.filter) {
+                info = getValueByPath(info, ctx.query.filter);
+                if (!info) {
+                    ctx.throw(HttpCode.BAD_REQUEST, `Empty content.`, { expose: true });
+                }
+            }
+
+            ctx.body = info;
+        });        
+    }
+
+    function extractQueryOptionFromBody(body) {
+        return _.mapKeys(_.pick(body, [
+            'association',
+            'projection',
+            'groupBy',
+            'orderBy',
+            'offset',
+            'limit',
+        ]), (v, k) => '$'+k);
+    }
 
     //get list    
     app.addRoute(router, 'get', '/:entity', async (ctx) => {
         let db = ctx.appModule.db(options.schemaName);
         let EntityModel = db.model(ctx.params.entity);
 
-        ctx.body = await EntityModel.findAll_({ $where: ctx.query });
+        let queryOptions = { 
+            $query: ctx.query, 
+            $unboxing: true, 
+            ...extractQueryOptionFromBody(ctx.request.body)
+        };
+
+        ctx.body = await EntityModel.findAll_(queryOptions);
     });
 
     //get detail
@@ -110,11 +138,15 @@ module.exports = (app, baseRoute, options) => {
         let db = ctx.appModule.db(options.schemaName);
         let EntityModel = db.model(ctx.params.entity);
 
-        let query = { [EntityModel.meta.keyField]: ctx.params.id };
+        let queryOptions = { 
+            $query: { [EntityModel.meta.keyField]: ctx.params.id }, 
+            $unboxing: true, 
+            ...extractQueryOptionFromBody(ctx.request.body)
+        };
 
-        let model = await EntityModel.findOne_({ $where: query });        
+        let model = await EntityModel.findOne_(queryOptions);        
         if (!model) {
-            ctx.throw(HttpCode.BAD_REQUEST, `Invalid ${ctx.params.entity} id.`, { expose: true, payload: query });
+            ctx.throw(HttpCode.BAD_REQUEST, `Invalid "${ctx.params.entity}" id.`, { expose: true });
         } 
 
         ctx.body = model;
@@ -125,19 +157,33 @@ module.exports = (app, baseRoute, options) => {
         let db = ctx.appModule.db(options.schemaName);
         let EntityModel = db.model(ctx.params.entity);        
 
-        let model = await EntityModel.create_(ctx.body);        
+        let model = await EntityModel.create_(ctx.request.body, { $retrieveCreated: true });        
 
         ctx.body = model;
     });
 
     //update
     app.addRoute(router, 'put', '/:entity/:id', async (ctx) => {
+        let db = ctx.appModule.db(options.schemaName);
+        let EntityModel = db.model(ctx.params.entity);        
 
+        let where = { [EntityModel.meta.keyField]: ctx.params.id };
+
+        let model = await EntityModel.update_(ctx.request.body, { $query: where, $retrieveUpdated: true });        
+
+        ctx.body = model;
     });
 
     //delete
     app.addRoute(router, 'del', '/:entity/:id', async (ctx) => {
+        let db = ctx.appModule.db(options.schemaName);
+        let EntityModel = db.model(ctx.params.entity);
 
+        let where = { [EntityModel.meta.keyField]: ctx.params.id };
+
+        await EntityModel.delete_({ $query: where });                
+
+        ctx.body = { status: 'OK' };
     });   
 
     app.addRouter(router);

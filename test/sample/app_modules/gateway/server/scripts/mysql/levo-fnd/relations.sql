@@ -6,8 +6,6 @@ ALTER TABLE `service` ADD FOREIGN KEY (`parentService`) REFERENCES `service` (`i
 
 ALTER TABLE `servicePrice` ADD FOREIGN KEY (`service`) REFERENCES `service` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
 
-ALTER TABLE `servicePrice` ADD FOREIGN KEY (`servicePackage`) REFERENCES `service` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
-
 ALTER TABLE `servicePrice` ADD FOREIGN KEY (`serviceLevel`) REFERENCES `serviceLevel` (`code`) ON DELETE NO ACTION ON UPDATE NO ACTION;
 
 ALTER TABLE `servicePromotion` ADD FOREIGN KEY (`price`) REFERENCES `servicePrice` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
