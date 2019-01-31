@@ -8,5 +8,6 @@ module.exports = {
     },
     http: require('./decorators/httpMethod'),
     middleware: (...names) => names.map(name => ({ name: 'fromStore', options: name })),    
-    Controller: require('./patterns/Controller')
+    Controller: require('./patterns/Controller'),
+    Errors: require('./Errors') 
 };

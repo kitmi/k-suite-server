@@ -88,7 +88,7 @@ module.exports = (app, baseRoute, options) => {
 
     if (app.env === 'development') {
         app.addRoute(router, 'get', urlJoin(metadataEndpoint, ':entity'), async (ctx) => {
-            let entityName = ctx.params.entity;
+            let entityName = _.camelCase(ctx.params.entity);
             if (!(entityName in entityModels)) {
                 throw new BadRequest('Invalid entity endpoint.');
             }
@@ -122,7 +122,13 @@ module.exports = (app, baseRoute, options) => {
     //get list    
     app.addRoute(router, 'get', '/:entity', async (ctx) => {
         let db = ctx.appModule.db(options.schemaName);
-        let EntityModel = db.model(ctx.params.entity);
+
+        let entityName = _.camelCase(ctx.params.entity);
+        if (!(entityName in entityModels)) {
+            throw new BadRequest('Entity endpoint not found.');
+        }
+
+        let EntityModel = db.model(entityName);
 
         let queryOptions = { 
             $query: ctx.query, 
@@ -136,7 +142,13 @@ module.exports = (app, baseRoute, options) => {
     //get detail
     app.addRoute(router, 'get', '/:entity/:id', async (ctx) => {
         let db = ctx.appModule.db(options.schemaName);
-        let EntityModel = db.model(ctx.params.entity);
+
+        let entityName = _.camelCase(ctx.params.entity);
+        if (!(entityName in entityModels)) {
+            throw new BadRequest('Entity endpoint not found.');
+        }
+
+        let EntityModel = db.model(entityName);
 
         let queryOptions = { 
             $query: { [EntityModel.meta.keyField]: ctx.params.id }, 
@@ -155,7 +167,13 @@ module.exports = (app, baseRoute, options) => {
     //create
     app.addRoute(router, 'post', '/:entity', async (ctx) => {
         let db = ctx.appModule.db(options.schemaName);
-        let EntityModel = db.model(ctx.params.entity);        
+
+        let entityName = _.camelCase(ctx.params.entity);
+        if (!(entityName in entityModels)) {
+            throw new BadRequest('Entity endpoint not found.');
+        }
+
+        let EntityModel = db.model(entityName);       
 
         let model = await EntityModel.create_(ctx.request.body, { $retrieveCreated: true });        
 
@@ -165,7 +183,13 @@ module.exports = (app, baseRoute, options) => {
     //update
     app.addRoute(router, 'put', '/:entity/:id', async (ctx) => {
         let db = ctx.appModule.db(options.schemaName);
-        let EntityModel = db.model(ctx.params.entity);        
+
+        let entityName = _.camelCase(ctx.params.entity);
+        if (!(entityName in entityModels)) {
+            throw new BadRequest('Entity endpoint not found.');
+        }
+
+        let EntityModel = db.model(entityName);
 
         let where = { [EntityModel.meta.keyField]: ctx.params.id };
 
@@ -177,7 +201,13 @@ module.exports = (app, baseRoute, options) => {
     //delete
     app.addRoute(router, 'del', '/:entity/:id', async (ctx) => {
         let db = ctx.appModule.db(options.schemaName);
-        let EntityModel = db.model(ctx.params.entity);
+
+        let entityName = _.camelCase(ctx.params.entity);
+        if (!(entityName in entityModels)) {
+            throw new BadRequest('Entity endpoint not found.');
+        }
+
+        let EntityModel = db.model(entityName);
 
         let where = { [EntityModel.meta.keyField]: ctx.params.id };
 
