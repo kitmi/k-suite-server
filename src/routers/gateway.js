@@ -66,7 +66,7 @@ module.exports = (app, baseRoute, options) => {
     let entityModels = options.entityModels;
 
     if (typeof options.entityModels === 'string') {
-        entityModels = fs.readJsonSync(options.entityModels); 
+        entityModels = fs.readJsonSync(app.toAbsolutePath(options.entityModels)); 
     }
 
     app.addRoute(router, 'get', apiListEndpoint, async (ctx) => {
