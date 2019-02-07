@@ -124,17 +124,31 @@ module.exports = (app, baseRoute, options) => {
         let db = ctx.appModule.db(options.schemaName);
 
         let entityName = _.camelCase(ctx.params.entity);
-        if (!(entityName in entityModels)) {
+        let apiInfo = entityModels[entityName];
+        if (!apiInfo) {
             throw new BadRequest('Entity endpoint not found.');
         }
 
-        let EntityModel = db.model(entityName);
+        let queryOptions;
 
-        let queryOptions = { 
-            $query: ctx.query, 
-            $unboxing: true, 
-            ...extractQueryOptionFromBody(ctx.request.body)
-        };
+        if (apiInfo.type && apiInfo.type === 'view') {
+            entityName = apiInfo.selectFrom;
+
+            queryOptions = { 
+                $query: { ...ctx.query, ...apiInfo.where }, 
+                $unboxing: true, 
+                $association: apiInfo.joinWith
+            };
+
+        } else {
+            queryOptions = { 
+                $query: ctx.query, 
+                $unboxing: true, 
+                ...extractQueryOptionFromBody(ctx.request.body)
+            };
+        }
+
+        let EntityModel = db.model(entityName);
 
         ctx.body = await EntityModel.findAll_(queryOptions);
     });
