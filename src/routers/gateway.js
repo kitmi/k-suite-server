@@ -3,12 +3,16 @@
 const { _, fs, eachAsync_, urlJoin, getValueByPath } = require('rk-utils');
 const Router = require('koa-router');
 const HttpCode = require('http-status-codes');
-const { InvalidConfiguration, BadRequest } = require('../Errors');
+const { InvalidConfiguration, BadRequest, MethodNotAllowed } = require('../Errors');
 
 /**
  * RESTful router.
  * @module Router_Rest
  */
+
+ function mergeQuery(query, extra) {
+    return (query && query.$query) ? { $query: { ...query.$query, ...extra } } : { ...query, ...extra };
+ }
 
 /**
  * Create a RESTful router.
@@ -71,16 +75,30 @@ module.exports = (app, baseRoute, options) => {
 
     app.addRoute(router, 'get', apiListEndpoint, async (ctx) => {
         let list = [];
+
+        let db = ctx.appModule.db(options.schemaName);
         
         await eachAsync_(entityModels, async (config, entityName) => {
             //todo: filter entity or methods by config
             let entityNameInUrl = _.kebabCase(entityName);
+            let keyFieldName;
+
+            if (config.type === 'view') {
+                keyFieldName = config.key || db.model(config.selectFrom).meta.keyField;
+            } else {
+                keyFieldName = db.model(entityName).meta.keyField;
+            }          
+
+            keyFieldName = ':' + keyFieldName;
 
             list.push({ type: 'list', method: 'get', url: urlJoin(baseRoute, entityNameInUrl) });
-            list.push({ type: 'detail', method: 'get', url: urlJoin(baseRoute, entityNameInUrl, ':id') });
-            list.push({ type: 'create', method: 'post', url: urlJoin(baseRoute, entityNameInUrl) });
-            list.push({ type: 'update', method: 'put', url: urlJoin(baseRoute, entityNameInUrl, ':id') });
-            list.push({ type: 'delete', method: 'del', url: urlJoin(baseRoute, entityNameInUrl, ':id') });
+            list.push({ type: 'detail', method: 'get', url: urlJoin(baseRoute, entityNameInUrl, keyFieldName) });
+
+            if (!config.readOnly) {
+                list.push({ type: 'create', method: 'post', url: urlJoin(baseRoute, entityNameInUrl) });
+                list.push({ type: 'update', method: 'put', url: urlJoin(baseRoute, entityNameInUrl, keyFieldName) });
+                list.push({ type: 'delete', method: 'del', url: urlJoin(baseRoute, entityNameInUrl, keyFieldName) });
+            }
         });
 
         ctx.body = list;
@@ -107,18 +125,7 @@ module.exports = (app, baseRoute, options) => {
             ctx.body = info;
         });        
     }
-
-    function extractQueryOptionFromBody(body) {
-        return _.mapKeys(_.pick(body, [
-            'association',
-            'projection',
-            'groupBy',
-            'orderBy',
-            'offset',
-            'limit',
-        ]), (v, k) => '$'+k);
-    }
-
+    
     //get list    
     app.addRoute(router, 'get', '/:entity', async (ctx) => {
         let db = ctx.appModule.db(options.schemaName);
@@ -135,16 +142,15 @@ module.exports = (app, baseRoute, options) => {
             entityName = apiInfo.selectFrom;
 
             queryOptions = { 
-                $query: { ...ctx.query, ...apiInfo.where }, 
+                ...mergeQuery(ctx.query, apiInfo.where),
                 $unboxing: true, 
                 $association: apiInfo.joinWith
             };
 
         } else {
             queryOptions = { 
-                $query: ctx.query, 
-                $unboxing: true, 
-                ...extractQueryOptionFromBody(ctx.request.body)
+                ...ctx.query, 
+                $unboxing: true
             };
         }
 
@@ -158,17 +164,29 @@ module.exports = (app, baseRoute, options) => {
         let db = ctx.appModule.db(options.schemaName);
 
         let entityName = _.camelCase(ctx.params.entity);
-        if (!(entityName in entityModels)) {
+        let apiInfo = entityModels[entityName];
+        if (!apiInfo) {
             throw new BadRequest('Entity endpoint not found.');
         }
 
-        let EntityModel = db.model(entityName);
+        let queryOptions;
 
-        let queryOptions = { 
-            $query: { [EntityModel.meta.keyField]: ctx.params.id }, 
-            $unboxing: true, 
-            ...extractQueryOptionFromBody(ctx.request.body)
-        };
+        if (apiInfo.type && apiInfo.type === 'view') {
+            entityName = apiInfo.selectFrom;
+            let keyField = apiInfo.key || EntityModel.meta.keyField
+
+            queryOptions = { 
+                $query: { [keyField]: ctx.params.id, ...apiInfo.where },
+                $unboxing: true, 
+                $association: apiInfo.joinWith
+            };
+
+        } else {
+            queryOptions = { 
+                $query: { [EntityModel.meta.keyField]: ctx.params.id }, 
+                $unboxing: true
+            };
+        }
 
         let model = await EntityModel.findOne_(queryOptions);        
         if (!model) {
@@ -183,8 +201,13 @@ module.exports = (app, baseRoute, options) => {
         let db = ctx.appModule.db(options.schemaName);
 
         let entityName = _.camelCase(ctx.params.entity);
-        if (!(entityName in entityModels)) {
+        let apiInfo = entityModels[entityName];
+        if (!apiInfo) {
             throw new BadRequest('Entity endpoint not found.');
+        }
+
+        if (apiInfo.readOnly) {
+            throw new MethodNotAllowed('This is a read-only API.');
         }
 
         let EntityModel = db.model(entityName);       
@@ -199,8 +222,13 @@ module.exports = (app, baseRoute, options) => {
         let db = ctx.appModule.db(options.schemaName);
 
         let entityName = _.camelCase(ctx.params.entity);
-        if (!(entityName in entityModels)) {
+        let apiInfo = entityModels[entityName];
+        if (!apiInfo) {
             throw new BadRequest('Entity endpoint not found.');
+        }
+
+        if (apiInfo.readOnly) {
+            throw new MethodNotAllowed('This is a read-only API.');
         }
 
         let EntityModel = db.model(entityName);
@@ -217,8 +245,13 @@ module.exports = (app, baseRoute, options) => {
         let db = ctx.appModule.db(options.schemaName);
 
         let entityName = _.camelCase(ctx.params.entity);
-        if (!(entityName in entityModels)) {
+        let apiInfo = entityModels[entityName];
+        if (!apiInfo) {
             throw new BadRequest('Entity endpoint not found.');
+        }
+
+        if (apiInfo.readOnly) {
+            throw new MethodNotAllowed('This is a read-only API.');
         }
 
         let EntityModel = db.model(entityName);
