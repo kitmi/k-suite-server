@@ -107,12 +107,13 @@ module.exports = (app, baseRoute, options) => {
     if (app.env === 'development') {
         app.addRoute(router, 'get', urlJoin(metadataEndpoint, ':entity'), async (ctx) => {
             let entityName = _.camelCase(ctx.params.entity);
-            if (!(entityName in entityModels)) {
-                throw new BadRequest('Invalid entity endpoint.');
+            let apiInfo = entityModels[entityName];
+            if (!apiInfo) {
+                throw new BadRequest('Entity endpoint not found.');
             }
 
             let db = ctx.appModule.db(options.schemaName);
-            let EntityModel = db.model(entityName);
+            let EntityModel = db.model((apiInfo.type && apiInfo.type === 'view') ? apiInfo.selectFrom : entityName);
             let info = EntityModel.meta;
 
             if (ctx.query.filter) {
@@ -169,10 +170,11 @@ module.exports = (app, baseRoute, options) => {
             throw new BadRequest('Entity endpoint not found.');
         }
 
-        let queryOptions;
+        let EntityModel, queryOptions;
 
         if (apiInfo.type && apiInfo.type === 'view') {
             entityName = apiInfo.selectFrom;
+            EntityModel = db.model(entityName);
             let keyField = apiInfo.key || EntityModel.meta.keyField
 
             queryOptions = { 
@@ -182,11 +184,12 @@ module.exports = (app, baseRoute, options) => {
             };
 
         } else {
+            EntityModel = db.model(entityName);
             queryOptions = { 
                 $query: { [EntityModel.meta.keyField]: ctx.params.id }, 
                 $unboxing: true
             };
-        }
+        }        
 
         let model = await EntityModel.findOne_(queryOptions);        
         if (!model) {
