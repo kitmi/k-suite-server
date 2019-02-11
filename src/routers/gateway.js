@@ -78,7 +78,7 @@ module.exports = (app, baseRoute, options) => {
 
         let db = ctx.appModule.db(options.schemaName);
         
-        await eachAsync_(entityModels, async (config, entityName) => {
+        _.forOwn(entityModels, (config, entityName) => {
             //todo: filter entity or methods by config
             let entityNameInUrl = _.kebabCase(entityName);
             let keyFieldName;
