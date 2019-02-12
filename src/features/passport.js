@@ -29,11 +29,6 @@ module.exports = {
      * @property {object} config.init - Passport initialization settings     
      * @property {string} [config.init.userProperty='user'] - User property name, default: user      
      * 
-     * @property {object} config.auth - Passport authentication settings     
-     * @property {string} config.auth.loginUrl - The url of login page           
-     * @property {string} [config.auth.successRedirect] - After successful login, user will redirect to given URL if successReturnToOrRedirect not set
-     * @property {string} [config.auth.successReturnToOrRedirect='/'] - After successful login, if session.returnTo exists, then the user will be redirected to session.returnTo else to the given URL     
-     * 
      * @property {array} config.strategies - Passport strategies, e.g. [ 'local', 'facebook' ]
      * @returns {Promise.<*>}
      */
@@ -47,16 +42,10 @@ module.exports = {
             );
         }        
 
-        passport.config = {             
-            init: { ...config.init },
-            auth: { loginUrl: '/login', successReturnToOrRedirect: '/', ...config.auth }, 
-            ..._.omit(config, ['init', 'auth'])
-        };        
-
-        let initializeMiddleware = passport.initialize(passport.config.init);
+        let initializeMiddleware = passport.initialize(config.init);
 
         app.on('before:' + Feature.PLUGIN, () => {
-            app.useMiddlewares(app.router, passport.config.useSession ? [ initializeMiddleware, passport.session() ] : initializeMiddleware);
+            app.useMiddlewares(app.router, config.useSession ? [ initializeMiddleware, passport.session() ] : initializeMiddleware);
         });
 
         app.registerService('passport', passport);

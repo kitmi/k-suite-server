@@ -25,6 +25,6 @@ module.exports = {
         //delay to load middlewares after all services are ready
         app.on('after:' + Feature.SERVICE, () => {
             app.useMiddlewares(app.router, middlewares);
-        })        
+        });        
     }
 };

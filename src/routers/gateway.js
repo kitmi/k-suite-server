@@ -157,6 +157,8 @@ module.exports = (app, baseRoute, options) => {
 
         let EntityModel = db.model(entityName);
 
+        queryOptions.$variables = ctx.sessionVariables;
+
         ctx.body = await EntityModel.findAll_(queryOptions);
     });
 
@@ -191,6 +193,8 @@ module.exports = (app, baseRoute, options) => {
             };
         }        
 
+        queryOptions.$variables = ctx.sessionVariables;
+
         let model = await EntityModel.findOne_(queryOptions);        
         if (!model) {
             ctx.throw(HttpCode.BAD_REQUEST, `Invalid "${ctx.params.entity}" id.`, { expose: true });
@@ -215,7 +219,10 @@ module.exports = (app, baseRoute, options) => {
 
         let EntityModel = db.model(entityName);       
 
-        let model = await EntityModel.create_(ctx.request.body, { $retrieveCreated: true });        
+        let model = await EntityModel.create_(ctx.request.body, { 
+            $retrieveCreated: true,
+            $variables: ctx.sessionVariables
+        });        
 
         ctx.body = model;
     });
@@ -238,7 +245,11 @@ module.exports = (app, baseRoute, options) => {
 
         let where = { [EntityModel.meta.keyField]: ctx.params.id };
 
-        let model = await EntityModel.update_(ctx.request.body, { $query: where, $retrieveUpdated: true });        
+        let model = await EntityModel.update_(ctx.request.body, { 
+            $query: where, 
+            $retrieveUpdated: true,
+            $variables: ctx.sessionVariables 
+        });        
 
         ctx.body = model;
     });
@@ -261,9 +272,12 @@ module.exports = (app, baseRoute, options) => {
 
         let where = { [EntityModel.meta.keyField]: ctx.params.id };
 
-        await EntityModel.delete_({ $query: where });                
+        let deleted = await EntityModel.delete_({ 
+            $query: where,
+            $variables: ctx.sessionVariables
+        });                
 
-        ctx.body = { status: 'OK' };
+        ctx.body = { status: 'OK', deleted };
     });   
 
     app.addRouter(router);

@@ -8,20 +8,11 @@
 /**
  * Initialize ensureLoggedIn middleware
  * @param {object} options
+ * @property {string} [options.loginUrl] - If given, will redirect to loginUrl if not loggedIn
+ * @property {boolean} [options.successReturnToOrRedirect] - If given, will redirect to loginUrl if not loggedIn
  * @param {Routable} app
  */  
-module.exports = (opt, app) => {
-    let passportService = app.getService('passport');    
-
-    if (!passportService) {
-        throw new InvalidConfiguration(
-            'Passport feature is not enabled.',
-            app,
-            'passport'
-        );
-    }
-
-    let options = { ...passportService.config.auth, ...opt };
+module.exports = (options, app) => {
 
     return async (ctx, next) => {
         if (ctx.isAuthenticated()) {
