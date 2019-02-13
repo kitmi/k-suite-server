@@ -11,7 +11,7 @@ const { InvalidConfiguration, BadRequest, MethodNotAllowed } = require('../Error
  */
 
  function mergeQuery(query, extra) {
-    return (query && query.$query) ? { $query: { ...query.$query, ...extra } } : { ...query, ...extra };
+    return (query && query.$query) ? { $query: { ...query.$query, ...extra } } : { ...query, $query: extra };
  }
 
 /**
