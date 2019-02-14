@@ -44,8 +44,12 @@ function processQuery(ctx, apiInfo) {
             condition.$limit = ensureInt('$limit', $limit);
         }    
 
-        if ($returnTotal) {
-            condition.$totalCount = true;
+        if ($returnTotal) {   
+            if ($returnTotal === '1' || $returnTotal === 'true') {
+                condition.$totalCount = true;
+            } else {        
+                condition.$totalCount = $returnTotal;
+            }
         }    
 
         if (!_.isEmpty(apiInfo.query)) {
