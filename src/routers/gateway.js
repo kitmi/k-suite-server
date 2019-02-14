@@ -121,6 +121,7 @@ module.exports = (app, baseRoute, options) => {
 
     let apiListEndpoint = options.apiListEndpoint || '/_list';
     let metadataEndpoint = options.metadataEndpoint || '/_info';
+    let descEndpoint = options.metadataEndpoint || '/_desc';
 
     let entityModels = options.entityModels;
 
@@ -136,25 +137,77 @@ module.exports = (app, baseRoute, options) => {
         _.forOwn(entityModels, (config, entityName) => {
             //todo: filter entity or methods by config
             let entityNameInUrl = _.kebabCase(entityName);
-            let keyFieldName;
+            let keyFieldName;            
 
             if (config.type === 'view') {
-                keyFieldName = config.key || db.model(config.selectFrom).meta.keyField;
+                keyFieldName = config.key || db.model(config.selectFrom).meta.keyField;                
             } else {
                 keyFieldName = db.model(entityName).meta.keyField;
             }          
 
             keyFieldName = ':' + keyFieldName;
 
-            list.push({ type: 'list', method: 'get', url: urlJoin(baseRoute, entityNameInUrl) });
-            list.push({ type: 'detail', method: 'get', url: urlJoin(baseRoute, entityNameInUrl, keyFieldName) });
+            let singleUrl = urlJoin(baseRoute, entityNameInUrl, keyFieldName);
+            let batchUrl = urlJoin(baseRoute, entityNameInUrl);
+            let descUrl = app.toWebPath(urlJoin(baseRoute, '_desc', _.kebabCase(entityName)));
+
+            list.push({ type: 'list', method: 'get', url: batchUrl, apiDesc: descUrl });
+            list.push({ type: 'detail', method: 'get', url: singleUrl });
 
             if (!config.readOnly) {
-                list.push({ type: 'create', method: 'post', url: urlJoin(baseRoute, entityNameInUrl) });
-                list.push({ type: 'update', method: 'put', url: urlJoin(baseRoute, entityNameInUrl, keyFieldName) });
-                list.push({ type: 'delete', method: 'del', url: urlJoin(baseRoute, entityNameInUrl, keyFieldName) });
+                list.push({ type: 'create', method: 'post', url: batchUrl });
+                list.push({ type: 'update', method: 'put', url: singleUrl });
+                list.push({ type: 'delete', method: 'del', url: singleUrl });
             }
         });
+
+        ctx.body = list;
+    });
+
+    app.addRoute(router, 'get', urlJoin(descEndpoint, ':entity'), async (ctx) => {
+        let list;        
+
+        let db = ctx.appModule.db(options.schemaName);
+        let entityName = _.camelCase(ctx.params.entity);
+        let config = entityModels[entityName];
+        let EntityModel;
+
+        if (config.type === 'view') {
+            list = {
+                'type': 'view',
+                'mainEntity': config.selectFrom                
+            };
+
+            if (config.joinWith) {
+                list.associations = config.joinWith;
+            }
+
+            if (config.where) {
+                list.where = config.where;
+            }
+
+            if (config.key) {
+                list.key = config.key;
+            }            
+
+            EntityModel = db.model(config.selectFrom);
+
+            if (config.query) {
+                list.query = _.mapValues(config.query, (info) => info.desc);
+            }
+
+            if (config.orderBy) {
+                list.orderBy = config.orderBy;
+            }
+        } else {
+            list = {
+                'type': 'entity',
+                'entity': entityName    
+            }            
+
+            EntityModel = db.model(entityName);
+            list.query = _.mapValues(EntityModel.meta.fields, (info) => info.displayName);
+        }   
 
         ctx.body = list;
     });
