@@ -55,7 +55,7 @@ function processQuery(ctx, apiInfo) {
         if (!_.isEmpty(apiInfo.query)) {
             _.forOwn(apiInfo.query, (info, param) => {
                 if (param in ctx.query) {
-                    queries.push(info);
+                    queries.push(info.where);
                 }
             });
         }    
