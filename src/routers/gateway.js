@@ -1,18 +1,69 @@
 "use strict";
 
-const { _, fs, eachAsync_, urlJoin, getValueByPath } = require('rk-utils');
+const { _, fs, urlJoin, getValueByPath } = require('rk-utils');
 const Router = require('koa-router');
 const HttpCode = require('http-status-codes');
 const { InvalidConfiguration, BadRequest, MethodNotAllowed } = require('../Errors');
+const validator = require('validator');
 
 /**
  * RESTful router.
  * @module Router_Rest
  */
 
- function mergeQuery(query, extra) {
-    return (query && query.$query) ? { $query: { ...query.$query, ...extra } } : { ...query, $query: extra };
- }
+function ensureInt(name, value) {
+    let sanitized = _.isInteger(value) ? value : validator.toInt(value);
+    if (isNaN(sanitized)) {
+        throw new BadRequest(`"${name}" should be an integer.`);
+    }
+
+    return sanitized;
+}
+
+function processQuery(ctx, apiInfo) {    
+    let condition = {};
+    let queries = apiInfo.where ? [ apiInfo.where ] : [];
+
+    if (ctx.query) {
+        let { $orderBy, $offset, $limit, $returnTotal } = ctx.query;
+
+        if ($orderBy) {
+            let orderBy = apiInfo.orderBy[$orderBy];
+            if (!orderBy) {
+                throw new BadRequest(`Order by "${orderBy}" is not supported.`);
+            }
+
+            condition.$orderBy = orderBy;
+        }
+
+        if ($offset) {        
+            condition.$offset = ensureInt('$offset', $offset);
+        }
+
+        if ($limit) {
+            condition.$limit = ensureInt('$limit', $limit);
+        }    
+
+        if ($returnTotal) {
+            condition.$totalCount = true;
+        }    
+
+        if (!_.isEmpty(apiInfo.query)) {
+            _.forOwn(apiInfo.query, (info, param) => {
+                if (param in ctx.query) {
+                    queries.push(info);
+                }
+            });
+        }    
+    }
+
+    let l = queries.length;
+    if (l > 0) {
+        condition.$query = l > 1 ? { $and: queries } : queries[0];
+    }
+
+    return condition;
+}
 
 /**
  * Create a RESTful router.
@@ -143,7 +194,7 @@ module.exports = (app, baseRoute, options) => {
             entityName = apiInfo.selectFrom;
 
             queryOptions = { 
-                ...mergeQuery(ctx.query, apiInfo.where),
+                ...processQuery(ctx, apiInfo),
                 $unboxing: true, 
                 $association: apiInfo.joinWith
             };
@@ -157,7 +208,10 @@ module.exports = (app, baseRoute, options) => {
 
         let EntityModel = db.model(entityName);
 
-        queryOptions.$variables = ctx.sessionVariables;
+        queryOptions.$variables = { 
+            session: ctx.sessionVariables,
+            query: ctx.query
+        };
 
         ctx.body = await EntityModel.findAll_(queryOptions);
     });
@@ -193,7 +247,10 @@ module.exports = (app, baseRoute, options) => {
             };
         }        
 
-        queryOptions.$variables = ctx.sessionVariables;
+        queryOptions.$variables = { 
+            session: ctx.sessionVariables,
+            query: ctx.query
+        };
 
         let model = await EntityModel.findOne_(queryOptions);        
         if (!model) {
@@ -221,7 +278,10 @@ module.exports = (app, baseRoute, options) => {
 
         let model = await EntityModel.create_(ctx.request.body, { 
             $retrieveCreated: true,
-            $variables: ctx.sessionVariables
+            $variables: { 
+                session: ctx.sessionVariables,
+                query: ctx.query
+            }
         });        
 
         ctx.body = model;
@@ -248,7 +308,10 @@ module.exports = (app, baseRoute, options) => {
         let model = await EntityModel.update_(ctx.request.body, { 
             $query: where, 
             $retrieveUpdated: true,
-            $variables: ctx.sessionVariables 
+            $variables: { 
+                session: ctx.sessionVariables,
+                query: ctx.query
+            } 
         });        
 
         ctx.body = model;
@@ -274,7 +337,10 @@ module.exports = (app, baseRoute, options) => {
 
         let deleted = await EntityModel.delete_({ 
             $query: where,
-            $variables: ctx.sessionVariables
+            $variables: { 
+                session: ctx.sessionVariables,
+                query: ctx.query
+            }
         });                
 
         ctx.body = { status: 'OK', deleted };
