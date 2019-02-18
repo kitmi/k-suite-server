@@ -20,7 +20,7 @@ function ensureInt(name, value) {
     return sanitized;
 }
 
-function processQuery(ctx, apiInfo) {    
+function processQuery(ctx, apiInfo, meta) {    
     let condition = {};
     let queries = apiInfo.where ? [ apiInfo.where ] : [];
 
@@ -34,6 +34,8 @@ function processQuery(ctx, apiInfo) {
             }
 
             condition.$orderBy = orderBy;
+        } else if (apiInfo.orderBy['$default']) {
+            condition.$orderBy = apiInfo.orderBy['$default'];
         }
 
         if ($offset) {        
@@ -58,7 +60,13 @@ function processQuery(ctx, apiInfo) {
                     queries.push(info.where);
                 }
             });
-        }    
+        } else if (meta) {
+            _.forOwn(ctx.query, (value, key) => {
+                if (key in meta.fields) {
+                    queries.push({ [key]: value });
+                }
+            });
+        }   
     }
 
     let l = queries.length;
@@ -203,7 +211,7 @@ module.exports = (app, baseRoute, options) => {
             list = {
                 'type': 'entity',
                 'entity': entityName    
-            }            
+            };            
 
             EntityModel = db.model(entityName);
             list.query = _.mapValues(EntityModel.meta.fields, (info) => info.displayName);
@@ -245,10 +253,12 @@ module.exports = (app, baseRoute, options) => {
             throw new BadRequest('Entity endpoint not found.');
         }
 
-        let queryOptions;
+        let queryOptions, EntityModel;
 
         if (apiInfo.type && apiInfo.type === 'view') {
             entityName = apiInfo.selectFrom;
+
+            EntityModel = db.model(entityName);
 
             queryOptions = { 
                 ...processQuery(ctx, apiInfo),
@@ -257,13 +267,13 @@ module.exports = (app, baseRoute, options) => {
             };
 
         } else {
+            EntityModel = db.model(entityName);
+
             queryOptions = { 
-                ...ctx.query, 
+                ...processQuery(ctx, apiInfo, EntityModel.meta),
                 $unboxing: true
             };
         }
-
-        let EntityModel = db.model(entityName);
 
         queryOptions.$variables = { 
             session: ctx.sessionVariables,
