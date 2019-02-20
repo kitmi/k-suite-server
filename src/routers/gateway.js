@@ -35,7 +35,7 @@ function processQuery(ctx, apiInfo, meta) {
             }
 
             condition.$orderBy = orderBy;
-        } else if (apiInfo.orderBy['$default']) {
+        } else if (apiInfo.orderBy && apiInfo.orderBy['$default']) {
             condition.$orderBy = apiInfo.orderBy['$default'];
         }
 
