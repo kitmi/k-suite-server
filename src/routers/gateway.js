@@ -23,6 +23,7 @@ function ensureInt(name, value) {
 function processQuery(ctx, apiInfo, meta) {    
     let condition = {};
     let queries = apiInfo.where ? [ apiInfo.where ] : [];
+    let assocs = [];
 
     if (ctx.query) {
         let { $orderBy, $offset, $limit, $returnTotal } = ctx.query;
@@ -62,9 +63,11 @@ function processQuery(ctx, apiInfo, meta) {
             });
         } else if (meta) {
             _.forOwn(ctx.query, (value, key) => {
-                if (key in meta.fields) {
+                if (key.startsWith(':') && value) {
+                    assocs.push(key.substr(1));
+                } else if (key in meta.fields) {
                     queries.push({ [key]: value });
-                }
+                } 
             });
         }   
     }
@@ -72,6 +75,10 @@ function processQuery(ctx, apiInfo, meta) {
     let l = queries.length;
     if (l > 0) {
         condition.$query = l > 1 ? { $and: queries } : queries[0];
+    }
+
+    if (assocs.length > 0) {
+        condition.$association = assocs;
     }
 
     return condition;
@@ -349,6 +356,36 @@ module.exports = (app, baseRoute, options) => {
                 session: ctx.sessionVariables,
                 query: ctx.query
             }
+        });        
+
+        ctx.body = model;
+    });
+
+    //update
+    app.addRoute(router, 'put', '/:entity', async (ctx) => {
+        let db = ctx.appModule.db(options.schemaName);
+
+        let entityName = _.camelCase(ctx.params.entity);
+        let apiInfo = entityModels[entityName];
+        if (!apiInfo) {
+            throw new BadRequest('Entity endpoint not found.');
+        }
+
+        if (apiInfo.readOnly) {
+            throw new MethodNotAllowed('This is a read-only API.');
+        }
+
+        let EntityModel = db.model(entityName);
+
+        let { where, data } = ctx.request.body;
+
+        let model = await EntityModel.update_(data, { 
+            $query: where, 
+            $retrieveUpdated: true,
+            $variables: { 
+                session: ctx.sessionVariables,
+                query: ctx.query
+            } 
         });        
 
         ctx.body = model;
