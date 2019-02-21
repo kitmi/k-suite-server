@@ -25,52 +25,50 @@ function processQuery(ctx, apiInfo, meta) {
     let queries = apiInfo.where ? [ apiInfo.where ] : [];
     let assocs = [];
 
-    if (ctx.query) {
-        let { $orderBy, $offset, $limit, $returnTotal } = ctx.query;
-
-        if ($orderBy) {
-            let orderBy = apiInfo.orderBy[$orderBy];
-            if (!orderBy) {
-                throw new BadRequest(`Order by "${orderBy}" is not supported.`);
-            }
-
-            condition.$orderBy = orderBy;
-        } else if (apiInfo.orderBy && apiInfo.orderBy['$default']) {
-            condition.$orderBy = apiInfo.orderBy['$default'];
+    let { $orderBy, $offset, $limit, $returnTotal } = ctx.query;
+        
+    if ($orderBy) {
+        let orderBy = apiInfo.orderBy[$orderBy];
+        if (!orderBy) {
+            throw new BadRequest(`Order by "${orderBy}" is not supported.`);
         }
 
-        if ($offset) {        
-            condition.$offset = ensureInt('$offset', $offset);
-        }
-
-        if ($limit) {
-            condition.$limit = ensureInt('$limit', $limit);
-        }    
-
-        if ($returnTotal) {   
-            if ($returnTotal === '1' || $returnTotal === 'true') {
-                condition.$totalCount = true;
-            } else {        
-                condition.$totalCount = $returnTotal;
-            }
-        }    
-
-        if (!_.isEmpty(apiInfo.query)) {
-            _.forOwn(apiInfo.query, (info, param) => {
-                if (param in ctx.query) {
-                    queries.push(info.where);
-                }
-            });
-        } else if (meta) {
-            _.forOwn(ctx.query, (value, key) => {
-                if (key.startsWith(':') && value) {
-                    assocs.push(key.substr(1));
-                } else if (key in meta.fields) {
-                    queries.push({ [key]: value });
-                } 
-            });
-        }   
+        condition.$orderBy = orderBy;
+    } else if (apiInfo.orderBy && apiInfo.orderBy['$default']) {
+        condition.$orderBy = apiInfo.orderBy['$default'];
     }
+
+    if ($offset) {        
+        condition.$offset = ensureInt('$offset', $offset);
+    }
+
+    if ($limit) {
+        condition.$limit = ensureInt('$limit', $limit);
+    }    
+
+    if ($returnTotal) {   
+        if ($returnTotal === '1' || $returnTotal === 'true') {
+            condition.$totalCount = true;
+        } else {        
+            condition.$totalCount = $returnTotal;
+        }
+    }    
+
+    if (!_.isEmpty(apiInfo.query)) {
+        _.forOwn(apiInfo.query, (info, param) => {
+            if (param in ctx.query) {
+                queries.push(info.where);
+            }
+        });
+    } else if (meta) {
+        _.forOwn(ctx.query, (value, key) => {
+            if (key.startsWith(':') && value) {
+                assocs.push(key.substr(1));
+            } else if (key in meta.fields) {
+                queries.push({ [key]: value });
+            } 
+        });
+    }   
 
     let l = queries.length;
     if (l > 0) {
