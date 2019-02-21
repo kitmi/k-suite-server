@@ -102,7 +102,7 @@ module.exports = (app, baseRoute, options) => {
                 throw new BadRequest('API endpoint not found.');
             }
 
-            let args = [];
+            let args = [ ctx ];
 
             if (apiInfo.params) {
                 apiInfo.params.forEach(param => {
