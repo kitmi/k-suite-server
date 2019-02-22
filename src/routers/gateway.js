@@ -299,7 +299,7 @@ module.exports = (app, baseRoute, options) => {
         }
 
         let EntityModel, queryOptions, keyField;
-        let keyValue = ctx.params.id;
+        let keyValue = ctx.params.id;        
 
         if (apiInfo.type && apiInfo.type === 'view') {
             entityName = apiInfo.selectFrom;
@@ -312,13 +312,26 @@ module.exports = (app, baseRoute, options) => {
                 $association: apiInfo.joinWith
             };
 
-        } else {
-            keyField = EntityModel.meta.keyField;
+        } else {            
             EntityModel = db.model(entityName);
+            keyField = EntityModel.meta.keyField;
+
+            let assocs = [];
+
+            _.forOwn(ctx.query, (value, key) => {
+                if (key.startsWith(':') && value) {
+                    assocs.push(key.substr(1));
+                } 
+            });
+
             queryOptions = { 
                 $query: { [keyField]: keyValue }, 
                 $unboxing: true
             };
+
+            if (assocs.length > 0) {
+                queryOptions.$association = assocs;
+            }
         }        
 
         queryOptions.$variables = { 
