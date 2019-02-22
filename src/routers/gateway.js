@@ -298,23 +298,25 @@ module.exports = (app, baseRoute, options) => {
             throw new BadRequest('Entity endpoint not found.');
         }
 
-        let EntityModel, queryOptions;
+        let EntityModel, queryOptions, keyField;
+        let keyValue = ctx.params.id;
 
         if (apiInfo.type && apiInfo.type === 'view') {
             entityName = apiInfo.selectFrom;
             EntityModel = db.model(entityName);
-            let keyField = apiInfo.key || EntityModel.meta.keyField
+            keyField = apiInfo.key || EntityModel.meta.keyField;
 
             queryOptions = { 
-                $query: { [keyField]: ctx.params.id, ...apiInfo.where },
+                $query: { [keyField]: keyValue, ...apiInfo.where },
                 $unboxing: true, 
                 $association: apiInfo.joinWith
             };
 
         } else {
+            keyField = EntityModel.meta.keyField;
             EntityModel = db.model(entityName);
             queryOptions = { 
-                $query: { [EntityModel.meta.keyField]: ctx.params.id }, 
+                $query: { [keyField]: keyValue }, 
                 $unboxing: true
             };
         }        
@@ -326,7 +328,7 @@ module.exports = (app, baseRoute, options) => {
 
         let model = await EntityModel.findOne_(queryOptions);        
         if (!model) {
-            ctx.throw(HttpCode.BAD_REQUEST, `Invalid "${ctx.params.entity}" id.`, { expose: true });
+            ctx.throw(HttpCode.NOT_FOUND, `"${EntityModel.meta.name}" with [${keyField}=${keyValue}] not found.`, { expose: true });
         } 
 
         ctx.body = model;
