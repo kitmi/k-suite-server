@@ -54,6 +54,18 @@ class BadRequest extends withExtraInfo(withName(withHttpStatus(Error, HttpCode.B
 };
 
 /**
+ * Http NotFound, 404.
+ * @class 
+ * @extends Error
+ * @mixes withHttpStatus
+ * @mixes withName
+ * @mixes withExtraInfo 
+ */
+class NotFound extends withExtraInfo(withName(withHttpStatus(Error, HttpCode.NOT_FOUND))) {
+
+};
+
+/**
  * Http MethodNotAllowed, 405.
  * @class 
  * @extends Error
@@ -101,6 +113,7 @@ class ServerError extends withExtraInfo(withName(withHttpStatus(Error, HttpCode.
 
 exports.withHttpStatus = withHttpStatus;
 exports.BadRequest = BadRequest;
+exports.NotFound = NotFound;
 exports.MethodNotAllowed = MethodNotAllowed;
 exports.InvalidConfiguration = InvalidConfiguration;
 exports.ServerError = ServerError;
