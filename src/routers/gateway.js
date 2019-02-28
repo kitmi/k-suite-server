@@ -28,9 +28,35 @@ function processQuery(ctx, apiInfo, meta) {
     let { $orderBy, $offset, $limit, $returnTotal } = ctx.query;
         
     if ($orderBy) {
-        let orderBy = apiInfo.orderBy[$orderBy];
-        if (!orderBy) {
-            throw new BadRequest(`Order by "${orderBy}" is not supported.`);
+        let orderBy;
+
+        if (meta) {
+            orderBy = {};
+            let rawOrderBy = _.castArray($orderBy);
+            rawOrderBy.forEach(byField => {
+                let ascend = true;
+
+                if (byField.startsWith('>')) {
+                    ascend = false;
+                    byField = byField.substr(1);
+                } else if (byField.startsWith('<')) {                    
+                    byField = byField.substr(1);
+                } 
+
+                if (byField.startsWith(':')) {
+                    byField = byField.substr(1);                    
+                } else if (!(byField in meta.fields)) {
+                    throw new BadRequest(`Unknown orderBy field "${byField}".`)
+                }
+
+                orderBy[byField] = ascend;
+            });
+            
+        } else {
+            orderBy = apiInfo.orderBy[$orderBy];
+            if (!orderBy) {
+                throw new BadRequest(`Order by "${orderBy}" is not supported.`);
+            }
         }
 
         condition.$orderBy = orderBy;
@@ -62,11 +88,15 @@ function processQuery(ctx, apiInfo, meta) {
         });
     } else if (meta) {
         _.forOwn(ctx.query, (value, key) => {
+            if (key.startsWith('$')) return;
+
             if (key.startsWith(':') && value) {
                 assocs.push(key.substr(1));
             } else if (key in meta.fields) {
                 queries.push({ [key]: value });
-            } 
+            } else {
+                throw new BadRequest(`Unknown query field "${key}".`);
+            }
         });
     }   
 
@@ -78,6 +108,8 @@ function processQuery(ctx, apiInfo, meta) {
     if (assocs.length > 0) {
         condition.$association = assocs;
     }
+
+    console.log(condition);
 
     return condition;
 }
