@@ -92,7 +92,7 @@ function processQuery(ctx, apiInfo, meta) {
 
             if (key.startsWith(':') && value) {
                 assocs.push(key.substr(1));
-            } else if (key in meta.fields) {
+            } else if (key.indexOf('.') > 0 || (key in meta.fields)) {
                 queries.push({ [key]: value });
             } else {
                 throw new BadRequest(`Unknown query field "${key}".`);
