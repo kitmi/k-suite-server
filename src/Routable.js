@@ -309,7 +309,7 @@ const Routable = T => class extends T {
                 ctx.app.emit('error', err, ctx);
           
                 // accepted types
-                ctx.type = 'application/json'
+                ctx.type = 'application/json';
 
                 let errorObject = { error: err.expose ? err.message : http.STATUS_CODES[ctx.status] };
                 if (this.env === 'development') {

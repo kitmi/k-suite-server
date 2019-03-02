@@ -32,7 +32,7 @@ module.exports = {
 
                 if (!config.connection) {
                     throw new InvalidConfiguration(
-                        'Missing connection config for data source "${serviceName}".',
+                        `Missing connection config for data source "${serviceName}".`,
                         app,
                         `dataSource.${dbms}.${connectorName}`
                     );

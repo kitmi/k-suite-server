@@ -42,6 +42,8 @@ module.exports = (app, baseRoute, options) => {
     
     let router = baseRoute === '/' ? new Router() : new Router({prefix: baseRoute});
 
+    app.useMiddleware(router, app.restApiWrapper(), 'restApiWrapper');
+
     if (options.middlewares) {
         app.useMiddlewares(router, options.middlewares);
     }
@@ -60,7 +62,7 @@ module.exports = (app, baseRoute, options) => {
         if (controller.prototype instanceof Controller) {
             controller = new controller(app);
             isObj = true;
-        }
+        }        
 
         if (hasMethod(controller, 'query')) {
             app.addRoute(router, 'get', batchUrl, isObj ? controller.query.bind(controller) : controller.query);
