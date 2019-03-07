@@ -75,10 +75,10 @@ module.exports = (app, baseRoute, options) => {
             let entityNameInUrl = _.kebabCase(entityName);           
             
             _.forOwn(methods, (methodInfo, methodName) => {
-                let params = Object.values(methodInfo.params).reduce((result, v) => {
+                let params = methodInfo.params ? Object.values(methodInfo.params).reduce((result, v) => {
                     result[v.name] = _.omit(v, ['name']);
                     return result;
-                }, {});
+                }, {}) : {};
 
                 list.push({ method: methodInfo.httpMethod, url: urlJoin(baseRoute, entityNameInUrl, methodName), desc: methodInfo.desc, params });
             });        
