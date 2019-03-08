@@ -23,7 +23,7 @@ let createMiddleware = (opt, app) => {
             app, 
             'middlewares.passportAuth.strategy'
         );
-    }
+    }    
     
     let passportService = app.getService('passport');
 
@@ -34,8 +34,6 @@ let createMiddleware = (opt, app) => {
             'passport'
         );
     }
-
-    console.log(opt);
 
     if (opt.customHandler) {
         return (ctx, next) => passportService.authenticate(opt.strategy, opt.options, (err, user, info) => {

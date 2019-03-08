@@ -16,6 +16,16 @@ const HttpCode = require('http-status-codes');
  */  
 module.exports = (options, app) => {
 
+    let passportService = app.getService('passport');
+
+    if (!passportService) {
+        throw new InvalidConfiguration(
+            'Passport feature is not enabled.',
+            app,
+            'passport'
+        );
+    }
+
     return async (ctx, next) => {
         if (ctx.isAuthenticated()) {
             return next();

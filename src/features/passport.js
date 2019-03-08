@@ -30,6 +30,7 @@ module.exports = {
      * @property {string} [config.init.userProperty='user'] - User property name, default: user      
      * 
      * @property {array} config.strategies - Passport strategies, e.g. [ 'local', 'facebook' ]
+     * @property {array} config.exposeToServer - Expose the passport servcie to while server
      * @returns {Promise.<*>}
      */
     load_: function (app, config) {
@@ -44,11 +45,17 @@ module.exports = {
 
         let initializeMiddleware = passport.initialize(config.init);
 
+        passport.middlewares = config.useSession ? [ initializeMiddleware, passport.session() ] : initializeMiddleware;
+
         app.on('before:' + Feature.PLUGIN, () => {
-            app.useMiddlewares(app.router, config.useSession ? [ initializeMiddleware, passport.session() ] : initializeMiddleware);
+            app.useMiddlewares(app.router, passport.middlewares);
         });
 
-        app.registerService('passport', passport);
+        app.registerService('passport', passport);        
+
+        if (config.exposeToServer && app !== app.server) {
+            app.server.registerService('passport', passport);
+        }
 
         let strategies = Array.isArray(config.strategies) ? config.strategies : [ config.strategies ];
 
