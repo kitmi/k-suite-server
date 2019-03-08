@@ -38,7 +38,7 @@ let createMiddleware = (opt, app) => {
     console.log(opt);
 
     if (opt.customHandler) {
-        return ctx => passportService.authenticate(opt.strategy, opt.options, (err, user, info) => {
+        return (ctx, next) => passportService.authenticate(opt.strategy, opt.options, (err, user, info) => {
                 if (err) {
                     throw err;
                 }
@@ -47,10 +47,8 @@ let createMiddleware = (opt, app) => {
                     throw new BadRequest(info || `Invalid credential.`);
                 }
 
-                console.log();
-
-                return (opt && !opt.session) ? ctx.login(user, { session: false }) : ctx.login(user);
-        })(ctx);
+                return ((opt && !opt.session) ? ctx.login(user, { session: false }) : ctx.login(user)).then(next);
+        })(ctx, next);
     }
     
     return passportService.authenticate(opt.strategy, opt.options);
