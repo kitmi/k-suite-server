@@ -6,7 +6,7 @@
  */
 
 const Util = require('rk-utils');
-const session = require('koa-session-mowa');
+const session = require('koa-session');
 const { InvalidConfiguration } = require('../Errors');
 
 const DEFAULT_OPTS = {
@@ -76,5 +76,5 @@ module.exports = (options, app) => {
 
     let sessionOptions = Object.assign({}, DEFAULT_OPTS, options, {store: storeObject});
 
-    return session(sessionOptions);
+    return session(sessionOptions, app.server.koa);
 };

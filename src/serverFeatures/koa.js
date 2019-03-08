@@ -42,6 +42,7 @@ module.exports = {
      */
     load_: function (server, options) {
         let koa = server.router;
+        server.koa = koa;
         
         koa.env = server.env;
         koa.proxy = options.trustProxy && validator.toBoolean(options.trustProxy);

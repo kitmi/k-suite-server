@@ -77,7 +77,7 @@ function load_(app, baseRoute, options) {
 
         subRoute = Util.ensureLeftSlash(subRoute);
 
-        if (typeof methods === 'string') {
+        if (typeof methods === 'string' || Array.isArray(methods)) {
             methods = { get: methods };
         }
 

@@ -424,7 +424,7 @@ module.exports = (app, baseRoute, options) => {
 
         let { where, data } = ctx.request.body;
 
-        let model = await EntityModel.update_(data, { 
+        let model = await EntityModel.updateOne_(data, { 
             $query: where, 
             $retrieveUpdated: true,
             $variables: { 
@@ -454,7 +454,7 @@ module.exports = (app, baseRoute, options) => {
 
         let where = { [EntityModel.meta.keyField]: ctx.params.id };
 
-        let model = await EntityModel.update_(ctx.request.body, { 
+        let model = await EntityModel.updateOne_(ctx.request.body, { 
             $query: where, 
             $retrieveUpdated: true,
             $variables: { 
@@ -484,7 +484,7 @@ module.exports = (app, baseRoute, options) => {
 
         let where = { [EntityModel.meta.keyField]: ctx.params.id };
 
-        let deleted = await EntityModel.delete_({ 
+        let deleted = await EntityModel.deleteOne_({ 
             $query: where,
             $variables: { 
                 session: ctx.sessionVariables,

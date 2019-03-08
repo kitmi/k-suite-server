@@ -1,6 +1,6 @@
 "use strict";
 
-const { InvalidConfiguration } = require('../Errors');
+const { InvalidConfiguration, BadRequest } = require('../Errors');
 
 /**
  * Passport initialization middleware, required to initialize Passport service.
@@ -11,7 +11,8 @@ const { InvalidConfiguration } = require('../Errors');
  * Create a passport authentication middleware.
  * @param {object} opt - Passport options
  * @property {string} opt.strategy - Passport strategy
- * @property {object} [opt.options] - Passport strategy options 
+ * @property {object} [opt.options] - Passport strategy options
+ * @property {object} [opt.customHandler] - Flag to use passport strategy customHandler 
  * @param {Routable} app
  * @returns {KoaActionFunction}
  */
@@ -32,6 +33,24 @@ let createMiddleware = (opt, app) => {
             app,
             'passport'
         );
+    }
+
+    console.log(opt);
+
+    if (opt.customHandler) {
+        return ctx => passportService.authenticate(opt.strategy, opt.options, (err, user, info) => {
+                if (err) {
+                    throw err;
+                }
+
+                if (!user) {
+                    throw new BadRequest(info || `Invalid credential.`);
+                }
+
+                console.log();
+
+                return (opt && !opt.session) ? ctx.login(user, { session: false }) : ctx.login(user);
+        })(ctx);
     }
     
     return passportService.authenticate(opt.strategy, opt.options);
