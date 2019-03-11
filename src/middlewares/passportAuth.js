@@ -42,10 +42,14 @@ let createMiddleware = (opt, app) => {
                 }
 
                 if (!user) {
+                    if (info instanceof Error) {
+                        throw info;
+                    }                    
+
                     throw new BadRequest(info || `Invalid credential.`);
                 }
 
-                return ((opt && !opt.session) ? ctx.login(user, { session: false }) : ctx.login(user)).then(next);
+                return ctx.login(user, (opt && opt.options) || { session: false }).then(next);
         })(ctx, next);
     }
     

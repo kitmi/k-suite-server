@@ -5,9 +5,9 @@
  * @module Middleware_Session
  */
 
-const Util = require('rk-utils');
 const session = require('koa-session');
 const { InvalidConfiguration } = require('../Errors');
+const { tryRequire } = require('@k-suite/app/lib/utils/Helpers');
 
 const DEFAULT_OPTS = {
     key: 'k-server.sid',
@@ -46,24 +46,34 @@ module.exports = (options, app) => {
 
     let storeObject;
 
+    let opt = store.options || {};
+
+    if (store.dataSource) {
+        let dsService = app.getService(store.dataSource);
+        Object.assign(opt, { url: dsService.connectionString });
+    }
+
+    console.log(opt);
+
     switch (store.type) {
         case 'redis':
-            storeObject = require('koa-redis')(store.options);
+            storeObject = tryRequire('koa-redis')(opt);
             break;
         case 'mysql':
-            storeObject = require('koa-mysql-session')(store.options);
+            storeObject = tryRequire('koa-mysql-session')(opt);
             break;
         case 'mongodb':
-            storeObject = require('koa-generic-session-mongo')(store.options);
+            const MongoStore = tryRequire('koa-generic-session-mongo');
+            storeObject = new MongoStore(opt);
             break;
         case 'pgsql':
-            storeObject = require('koa-pg-session')(store.options);
+            storeObject = tryRequire('koa-pg-session')(opt);
             break;
         case 'sqlite3':
-            storeObject = require('koa-sqlite3-session')(store.options);
+            storeObject = tryRequire('koa-sqlite3-session')(opt);
             break;
         case 'memory':
-            const MemoryStore = require('koa-session-memory');
+            const MemoryStore = tryRequire('koa-session-memory');
             storeObject = new MemoryStore();
             break;
         default:

@@ -19,7 +19,7 @@ const RequestError = withExpose(RichInfoError);
  * @mixes withName
  * @mixes withExtraInfo 
  */
-class BadRequest extends withStatus(RequestError, HttpCode.BAD_REQUEST) {    
+class BadRequest extends withStatus(RequestError, HttpCode.BAD_REQUEST) {        
 };
 
 /**

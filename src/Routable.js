@@ -6,7 +6,6 @@ const { tryRequire } = require('@k-suite/app/lib/utils/Helpers');
 const Errors = require('./Errors');
 const Literal = require('./enum/Literal');
 const Koa = require('koa');
-const http = require('http');
 
 const Routable = T => class extends T {    
     /**     
@@ -165,9 +164,7 @@ const Routable = T => class extends T {
                 middleware.forEach(m => this.useMiddleware(router, m, name));
             } else {
                 this.useMiddleware(router, middleware, name);
-            }
-
-            this.log('verbose', `Attached middleware [${name}].`);
+            }            
         });        
 
         return this;
@@ -209,8 +206,18 @@ const Routable = T => class extends T {
 
                 if (type === 'string') {
                     // [ 'namedMiddleware' ]
-                    middlewareFactory = this.getMiddlewareFactory(action);                    
-                    handlers.push(this._wrapMiddlewareTracer(middlewareFactory(null, this), action));
+                    middlewareFactory = this.getMiddlewareFactory(action);   
+
+                    let middleware = middlewareFactory(null, this);
+
+                    //in case it's register by the middlewareFactory feature
+                    if (Array.isArray(middleware)) {
+                        middleware.forEach((middlewareItem, i) => handlers.push(
+                            this._wrapMiddlewareTracer(middlewareItem, `${action}-${i}` + (middleware.name ? ('-' + middleware.name) : ''))
+                        ));
+                    } else {                    
+                        handlers.push(this._wrapMiddlewareTracer(middleware, action));
+                    }
                 } else if (type === 'function') {
                     handlers.push(this._wrapMiddlewareTracer(action));
                 } else if (Array.isArray(action)) {
@@ -296,42 +303,17 @@ const Routable = T => class extends T {
             return action(ctx);
         };        
     }   
-    
-    restApiWrapper() {
-        return async (ctx, next) => {
-            try {
-                await next();
-                if (ctx.response.status === 404 && !ctx.response.body) ctx.throw(404);
-            } catch (err) {
-                ctx.status = typeof err.status === 'number' ? err.status : 500;
-          
-                // application
-                ctx.app.emit('error', err, ctx);
-          
-                // accepted types
-                ctx.type = 'application/json';
-
-                let errorObject = { error: err.expose ? err.message : http.STATUS_CODES[ctx.status] };
-                if (this.env === 'development') {
-                    errorObject.stack = err.stack;
-                    errorObject.appModule = this.name;
-                }
-
-                Object.assign(errorObject, _.pick(err, ['code', 'errorCode', 'payload'])); 
-
-                ctx.body = errorObject;
-            }        
-        };       
-    }
 
     useMiddleware(router, middleware, name) {          
+        assert: typeof middleware === 'function', middleware;
         router.use(this._wrapMiddlewareTracer(middleware, name));
+        this.log('verbose', `Attached middleware [${name}].`);
     }
 
-    _wrapMiddlewareTracer(middleware, name) {
+    _wrapMiddlewareTracer(middleware, name) {        
         if (this.options.traceMiddlewares) {            
             return (ctx, next) => {
-                this.log('debug', `Calling "${name || middleware.name}" ...`);
+                this.log('debug', `Calling "${name || middleware.name}" ...`);                
                 return middleware(ctx, next);
             }
         }

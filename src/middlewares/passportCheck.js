@@ -33,11 +33,14 @@ module.exports = (options, app) => {
 
         if (options.successReturnToOrRedirect && ctx.session) {
             ctx.session.returnTo = ctx.originalUrl || ctx.url;
+            console.log('session.returnTo set', ctx.session.returnTo);
         }
 
         if (!options.loginUrl) {
             ctx.throw(HttpCode.UNAUTHORIZED, 'authentication required');
         }
+
+        console.log('passportCheck', ctx.state);
 
         return ctx.redirect(options.loginUrl);
     }

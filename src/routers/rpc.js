@@ -53,7 +53,7 @@ module.exports = (app, baseRoute, options) => {
     
     let router = baseRoute === '/' ? new Router() : new Router({prefix: baseRoute});
 
-    app.useMiddleware(router, app.restApiWrapper(), 'restApiWrapper');
+    app.useMiddleware(router, app.getMiddlewareFactory('jsonError')(), 'jsonError');
 
     if (options.middlewares) {
         app.useMiddlewares(router, options.middlewares);
