@@ -53,8 +53,6 @@ module.exports = (options, app) => {
         Object.assign(opt, { url: dsService.connectionString });
     }
 
-    console.log(opt);
-
     switch (store.type) {
         case 'redis':
             storeObject = tryRequire('koa-redis')(opt);

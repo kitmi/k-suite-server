@@ -51,6 +51,10 @@ module.exports = {
             app.useMiddlewares(app.router, passport.middlewares);
         });
 
+        passport.hasStrategy = (name) => {
+            return name in passport._strategies;
+        };
+
         app.registerService('passport', passport);        
 
         if (config.exposeToServer && app !== app.server) {

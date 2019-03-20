@@ -279,7 +279,7 @@ const Routable = T => class extends T {
         }
 
         return url;
-    }
+    }    
 
     /**
      * Prepare context for koa action
@@ -289,11 +289,15 @@ const Routable = T => class extends T {
      */
     wrapAction(action) {
         return async (ctx) => {
+            ctx.toUrl = (relativePath, ...pathOrQuery) => {
+                return ctx.origin + this.toWebPath(relativePath, pathOrQuery);
+            };
+
             Object.assign(ctx.state, {
                 _self: ctx.originalUrl || this.toWebPath(ctx.url),
                 __: ctx.__,
                 _makePath: (relativePath, query) => this.toWebPath(relativePath, query),
-                _makeUrl: (relativePath, query) => (ctx.origin + this.toWebPath(relativePath, query))            
+                _makeUrl: (relativePath, query) => ctx.toUrl(relativePath, query)            
             });
 
             if (ctx.csrf) {            

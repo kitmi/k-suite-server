@@ -15,32 +15,18 @@ const HttpCode = require('http-status-codes');
  * @param {Routable} app
  */  
 module.exports = (options, app) => {
-
-    let passportService = app.getService('passport');
-
-    if (!passportService) {
-        throw new InvalidConfiguration(
-            'Passport feature is not enabled.',
-            app,
-            'passport'
-        );
-    }
-
     return async (ctx, next) => {
         if (ctx.isAuthenticated()) {
             return next();
         }
 
         if (options.successReturnToOrRedirect && ctx.session) {
-            ctx.session.returnTo = ctx.originalUrl || ctx.url;
-            console.log('session.returnTo set', ctx.session.returnTo);
+            ctx.session.returnTo = ctx.originalUrl || ctx.url;            
         }
 
         if (!options.loginUrl) {
             ctx.throw(HttpCode.UNAUTHORIZED, 'authentication required');
         }
-
-        console.log('passportCheck', ctx.state);
 
         return ctx.redirect(options.loginUrl);
     }
