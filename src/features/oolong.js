@@ -62,7 +62,9 @@ module.exports = {
 
             const Db = require(path.join(app.backendPath, Literal.MODELS_PATH, pascalCase(schemaName)));
             let db = new Db(connector, i18n);
-            DbCache[schemaName] = db;
+            db.app = app;
+
+            DbCache[schemaName] = db;            
 
             return db;
         }        
