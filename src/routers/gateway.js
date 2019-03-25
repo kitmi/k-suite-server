@@ -90,8 +90,11 @@ function processQuery(ctx, apiInfo, meta) {
         _.forOwn(ctx.query, (value, key) => {
             if (key.startsWith('$')) return;
 
-            if (key.startsWith(':') && value) {
-                assocs.push(key.substr(1));
+            if (key.startsWith(':')) {
+                let assoc = key.substr(1);
+                if (_.isNil(value) || value !== '0') {
+                    assocs.push(assoc);
+                } 
             } else if (key.indexOf('.') > 0 || (key in meta.fields)) {
                 queries.push({ [key]: value });
             } else {
@@ -108,8 +111,6 @@ function processQuery(ctx, apiInfo, meta) {
     if (assocs.length > 0) {
         condition.$association = assocs;
     }
-
-    console.log(condition);
 
     return condition;
 }
