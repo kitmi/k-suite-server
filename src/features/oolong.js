@@ -67,6 +67,11 @@ module.exports = {
             DbCache[schemaName] = db;            
 
             return db;
-        }        
+        };       
+        
+        app.model = (modelFullName) => {
+            let [ schemaName, modelName ] = modelFullName.split('.');
+            return app.db(schemaName).model(modelName);
+        };
     }
 };
