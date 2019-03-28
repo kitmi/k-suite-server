@@ -42,6 +42,7 @@ module.exports = {
             
             let schemaInfo = oolong.schemaDeployment[schemaName];
             if (!schemaInfo || !schemaInfo.dataSource) {
+                
                 throw new InvalidConfiguration(
                     `Missing "dataSource" in schemaDeployment section of oolong config.`,
                     app,
