@@ -96,9 +96,6 @@ module.exports = (app, baseRoute, options) => {
             let apiInfo = entityModels[entityName];
             apiInfo = apiInfo && apiInfo[methodName];
             if (!apiInfo || apiInfo.httpMethod.toUpperCase() !== ctx.method) {
-                console.log(apiInfo);
-                console.log(ctx.params, ctx.method);
-
                 throw new BadRequest('API endpoint not found.');
             }
 

@@ -352,7 +352,7 @@ module.exports = (app, baseRoute, options) => {
             let assocs = [];
 
             _.forOwn(ctx.query, (value, key) => {
-                if (key.startsWith(':') && value) {
+                if (key.startsWith(':') && (_.isNil(value) || value !== '0')) {
                     assocs.push(key.substr(1));
                 } 
             });
