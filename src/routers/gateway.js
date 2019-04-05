@@ -25,7 +25,17 @@ function processQuery(ctx, apiInfo, meta) {
     let queries = apiInfo.where ? [ apiInfo.where ] : [];
     let assocs = [];
 
-    let { $orderBy, $offset, $limit, $returnTotal } = ctx.query;
+    let { $orderBy, $offset, $limit, $returnTotal, $exist, $notExist } = ctx.query;
+
+    if ($exist) {
+        $exist = _.castArray($exist);
+        $exist.map(item => queries.push({[item]: { $ne: null }}));        
+    }
+
+    if ($notExist) {
+        $notExist = _.castArray($notExist);
+        $notExist.map(item => queries.push({[item]: { $eq: null }}));        
+    }
         
     if ($orderBy) {
         let orderBy;
