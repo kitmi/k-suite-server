@@ -23,7 +23,7 @@ function ensureInt(name, value) {
 function processQuery(ctx, apiInfo, meta) {    
     let condition = {};
     let queries = apiInfo.where ? [ apiInfo.where ] : [];
-    let assocs = [];
+    let assocs = new Set();
 
     let { $orderBy, $offset, $limit, $returnTotal, $exist, $notExist } = ctx.query;
 
@@ -103,10 +103,13 @@ function processQuery(ctx, apiInfo, meta) {
             if (key.startsWith(':')) {
                 let assoc = key.substr(1);
                 if (_.isNil(value) || value !== '0') {
-                    assocs.push(assoc);
+                    assocs.add(assoc);
                 } 
-            } else if (key.indexOf('.') > 0 || (key in meta.fields)) {
+            } else if (key.indexOf('.') > 0) {
+                assocs.add(_.initial(key.split('.')).join('.'));
                 queries.push({ [key]: value });
+            } else if ((key in meta.fields)) {
+                queries.push({ [key]: value });             
             } else {
                 throw new BadRequest(`Unknown query field "${key}".`);
             }
@@ -118,8 +121,8 @@ function processQuery(ctx, apiInfo, meta) {
         condition.$query = l > 1 ? { $and: queries } : queries[0];
     }
 
-    if (assocs.length > 0) {
-        condition.$association = assocs;
+    if (assocs.size > 0) {
+        condition.$association = Array.from(assocs);
     }
 
     return condition;
