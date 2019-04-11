@@ -5,11 +5,9 @@
  * @module Errors
  */
 
-const { withStatus, withExpose, withName, withExtraInfo } = require('@k-suite/app/lib/utils/Helpers');
+const { withStatus } = require('./utils/Helpers');
+const { Errors: { RichInfoError, RequestError } } = require('@k-suite/app');
 const HttpCode = require('http-status-codes');
-
-const RichInfoError = withExtraInfo(withName(Error));
-const RequestError = withExpose(RichInfoError);
 
 /**
  * Http BadRequest, 400.
