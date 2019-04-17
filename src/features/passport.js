@@ -47,7 +47,7 @@ module.exports = {
 
         passport.middlewares = config.useSession ? [ initializeMiddleware, passport.session() ] : initializeMiddleware;
 
-        app.on('before:' + Feature.PLUGIN, () => {
+        app.on('before:' + Feature.FINAL, () => {
             app.useMiddlewares(app.router, passport.middlewares);
         });
 
