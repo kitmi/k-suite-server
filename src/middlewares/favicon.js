@@ -10,7 +10,7 @@ const _ = Util._;
 const fs = Util.fs;
 const path = require('path');
 const HttpCode = require('http-status-codes');
-const { InvalidConfiguration } = require('../Errors');
+const { InvalidConfiguration } = require('../utils/Errors');
 
 let favicon = (options, app) => {
     if (_.isString(options)) {

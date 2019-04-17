@@ -3,7 +3,7 @@
 const path = require('path');
 const { _, fs, glob, urlJoin, ensureLeftSlash, urlAppendQuery } = require('rk-utils');
 const { tryRequire } = require('@k-suite/app/lib/utils/Helpers');
-const Errors = require('./Errors');
+const Errors = require('./utils/Errors');
 const Literal = require('./enum/Literal');
 const Koa = require('koa');
 

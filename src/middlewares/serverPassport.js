@@ -1,6 +1,6 @@
 "use strict";
 
-const { InvalidConfiguration, BadRequest } = require('../Errors');
+const { InvalidConfiguration, BadRequest } = require('../utils/Errors');
 const { requireFeatures } = require('../utils/Helpers');
 
 /**

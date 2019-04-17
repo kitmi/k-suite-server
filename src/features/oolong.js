@@ -8,7 +8,7 @@
 const path = require('path');
 const { _, Promise, pascalCase, eachAsync_ } = require('rk-utils');
 const { Feature, Literal } = require('..').enum;
-const { InvalidConfiguration } = require('../Errors');
+const { InvalidConfiguration } = require('../utils/Errors');
 
 const DbCache = {};
 

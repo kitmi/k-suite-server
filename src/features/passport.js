@@ -10,7 +10,7 @@ const { _, eachAsync_ } = require('rk-utils');
 const { Feature } = require('..').enum;
 const { tryRequire } = require('@k-suite/app/lib/utils/Helpers');
 const KoaPassport = tryRequire('koa-passport').KoaPassport;
-const { InvalidConfiguration } = require('../Errors');
+const { InvalidConfiguration } = require('../utils/Errors');
 
 module.exports = {
 

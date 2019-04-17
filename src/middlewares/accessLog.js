@@ -6,7 +6,7 @@
  */
 
 const Util = require('rk-utils');
-const { InvalidConfiguration } = require('../Errors');
+const { InvalidConfiguration } = require('../utils/Errors');
 const { requireFeatures } = require('../utils/Helpers');
 const HttpStatus = require('http-status-codes');
 

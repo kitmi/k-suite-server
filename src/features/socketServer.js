@@ -10,7 +10,7 @@ const { _, urlJoin } = require('rk-utils');
 const { Feature, Literal } = require('..').enum;
 const { tryRequire } = require('@k-suite/app/lib/utils/Helpers');
 const SocketServer = tryRequire('socket.io');
-const { InvalidConfiguration } = require('../Errors');
+const { InvalidConfiguration } = require('../utils/Errors');
 
 function loadEventHandler(appModule, channelName, controllerBasePath, handlerName, isMiddleware = false) {
     let pos = handlerName.lastIndexOf('.');

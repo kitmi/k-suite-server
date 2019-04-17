@@ -6,7 +6,7 @@
  */
 
 const session = require('koa-session');
-const { InvalidConfiguration } = require('../Errors');
+const { InvalidConfiguration } = require('../utils/Errors');
 const { tryRequire } = require('@k-suite/app/lib/utils/Helpers');
 
 const DEFAULT_OPTS = {

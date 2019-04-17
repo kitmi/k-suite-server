@@ -3,7 +3,7 @@
 const { _, fs, eachAsync_, urlJoin, getValueByPath } = require('rk-utils');
 const Router = require('koa-router');
 const HttpCode = require('http-status-codes');
-const { InvalidConfiguration, BadRequest, NotFound } = require('../Errors');
+const { InvalidConfiguration, BadRequest, NotFound } = require('../utils/Errors');
 
 /**
  * RESTful router.
@@ -115,13 +115,17 @@ module.exports = (app, baseRoute, options) => {
             }
 
             let EntityModel = db.model(entityName); 
-            methodName += '_';
+            let asyncMethodName = methodName + '_';
 
-            if (typeof EntityModel[methodName] !== 'function') {
+            if (typeof EntityModel[asyncMethodName] !== 'function') {
                 throw new NotFound(`RPC endpoint "${ctx.path}" not found.`);
             }
 
-            ctx.body = await EntityModel[methodName](...args);
+            if (options.invokeTracking) {
+                app.log('verbose', `Invoking a process API [${entityName}.${methodName}] ...`);
+            }
+
+            ctx.body = await EntityModel[asyncMethodName](...args);
         });
     });    
 

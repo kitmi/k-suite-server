@@ -22,7 +22,7 @@ const Feature = require('@k-suite/app/lib/enum/Feature');
 const path = require('path');
 const Util = require('rk-utils');
 const Promise = Util.Promise;
-const { InvalidConfiguration } = require('../Errors');
+const { InvalidConfiguration } = require('../utils/Errors');
 const WebModule = require('../WebModule');
 
 module.exports = {

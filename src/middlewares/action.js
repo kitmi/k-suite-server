@@ -7,7 +7,7 @@
 
 const Util = require('rk-utils');
 const _ = Util._;
-const { InvalidConfiguration } = require('../Errors');
+const { InvalidConfiguration } = require('../utils/Errors');
 const Literal = require('../enum/Literal');
 
 const path = require('path');

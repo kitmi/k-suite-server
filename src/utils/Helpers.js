@@ -1,7 +1,7 @@
 "use strict";
 
 const _ = require('rk-utils')._;
-const { InvalidConfiguration } = require('../Errors');
+const { InvalidConfiguration } = require('../utils/Errors');
 
 exports.requireFeatures = function (features, app, middleware) {
     let hasNotEnabled = _.find(_.castArray(features), feature => !app.enabled(feature));

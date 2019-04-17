@@ -8,7 +8,7 @@
 const { _ } = require('rk-utils');
 const { tryRequire } = require('@k-suite/app/lib/utils/Helpers');
 const { Feature } = require('..').enum;
-const { InvalidConfiguration } = require('../Errors');
+const { InvalidConfiguration } = require('../utils/Errors');
 
 module.exports = {
     /**
