@@ -65,7 +65,7 @@ module.exports = {
         if (!exists) {
             throw new InvalidConfiguration(
                 `App [${config.name}] not exists.`,
-                app,
+                server,
                 `appRouting.${baseRoute}.name`);
         }
     

@@ -39,7 +39,7 @@ module.exports = {
 
         app.db = (schemaName) => {
             if (DbCache[schemaName]) return DbCache[schemaName];
-            
+
             let schemaInfo = oolong.schemaDeployment[schemaName];
             if (!schemaInfo || !schemaInfo.dataSource) {
                 
