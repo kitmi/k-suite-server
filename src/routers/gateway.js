@@ -20,6 +20,28 @@ function ensureInt(name, value) {
     return sanitized;
 }
 
+function processKeyValuePair(meta, assocs, queries, key, value) {
+    let lastDot = key.lastIndexOf('.');
+
+    if (lastDot > 0) {
+        let lastPart = key.substr(lastDot+1);
+        let leftPart = key.substr(0, lastDot);
+        
+        if (lastPart.startsWith('$')) {
+            value = { [lastPart]: value };
+
+            return processKeyValuePair(meta, assocs, queries, leftPart, value);
+        }
+
+        assocs.add(leftPart);
+        queries.push({ [key]: value });
+    } else if ((key in meta.fields)) {
+        queries.push({ [key]: value });             
+    } else {
+        throw new BadRequest(`Unknown query field "${key}".`);
+    }
+}
+
 function processQuery(ctx, apiInfo, meta) {    
     let condition = {};
     let queries = apiInfo.where ? [ apiInfo.where ] : [];
@@ -98,20 +120,15 @@ function processQuery(ctx, apiInfo, meta) {
         });
     } else if (meta) {
         _.forOwn(ctx.query, (value, key) => {
-            if (key.startsWith('$')) return;
+            if (key.startsWith('$')) return; 
 
             if (key.startsWith(':')) {
                 let assoc = key.substr(1);
                 if (_.isNil(value) || value !== '0') {
                     assocs.add(assoc);
                 } 
-            } else if (key.indexOf('.') > 0) {
-                assocs.add(_.initial(key.split('.')).join('.'));
-                queries.push({ [key]: value });
-            } else if ((key in meta.fields)) {
-                queries.push({ [key]: value });             
             } else {
-                throw new BadRequest(`Unknown query field "${key}".`);
+                processKeyValuePair(meta, assocs, queries, key, value);
             }
         });
     }   
