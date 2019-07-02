@@ -66,7 +66,7 @@ describe('unit:router:rest', function () {
                 },
                 "routing": {
                     "/api": {
-                        "rest": {}
+                        "simpleRest": {}
                     }
                 }
             };

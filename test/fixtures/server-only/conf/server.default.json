@@ -3,11 +3,10 @@
         "accessLog": {
             "transports": [
                 {
-                    "type": "fast-file-rotate",
-                    "options": {
-                        "level": "verbose",                        
-                        "fileName": "access-%DATE%.log",
-                        "dateFormat": "YYYY-MM-DD"
+                    "type": "console",                    
+                    "options": {      
+                        "level": "verbose",                      
+                        "format": "#!jsv: log.format.combine(log.format.colorize(), log.format.simple())"
                     }
                 }
             ]

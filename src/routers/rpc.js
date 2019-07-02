@@ -96,7 +96,7 @@ module.exports = (app, baseRoute, options) => {
             let apiInfo = entityModels[entityName];
             apiInfo = apiInfo && apiInfo[methodName];
             if (!apiInfo || apiInfo.httpMethod.toUpperCase() !== ctx.method) {
-                throw new BadRequest('API endpoint not found.');
+                throw new BadRequest('API endpoint not found. Request: ' + ctx.url);
             }
 
             let args = [ ctx ];
@@ -107,7 +107,7 @@ module.exports = (app, baseRoute, options) => {
                     let value = ctx.query[argName] || ctx.request.body[argName];
 
                     if (_.isNil(value) && !param.optional) {
-                        throw new BadRequest(`Required argument "${argName}" is not given.`);
+                        throw new BadRequest(`Required argument "${argName}" is not given. Request: ${ctx.url}`);
                     }
 
                     args.push(value);
