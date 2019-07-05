@@ -27,3 +27,4 @@ test/temp
 .nyc_output
 *.log
 **/*.log
+coverage

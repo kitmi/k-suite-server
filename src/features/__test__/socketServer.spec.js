@@ -2,7 +2,7 @@
 
 const path = require('path');
 const Util = require('rk-utils');
-const WebServer = require('../../WebServer');
+const WebServer = require('../../../lib/WebServer');
 const { Manager } = require('socket.io-client');
 
 const WORKING_DIR = path.resolve(__dirname, '../../../test/temp');
