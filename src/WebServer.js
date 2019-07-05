@@ -36,6 +36,12 @@ class WebServer extends Routable(Runable(ServiceContainer)) {
         super(name || 'server', Object.assign({ configName: Literal.SERVER_CFG_NAME }, options));    
 
         /**
+         * Hosting server.
+         * @member {WebServer}
+         **/
+        this.server = this;
+
+        /**
          * App modules path.
          * @member {string}
          */

@@ -73,9 +73,9 @@ module.exports = Object.assign({}, Literal, {
     RESOURCES_PATH: 'resources',
 
     /**
-     * Remote calls controllers path
+     * Web-socket controllers path
      */
-    REMOTE_CALLS_PATH: 'remoteCalls',
+    WS_CONTROLLERS_PATH: 'wsControllers',
 
     /**
      * Views files path, under backend folder

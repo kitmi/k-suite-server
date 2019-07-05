@@ -6,7 +6,7 @@
  */
 
 const path = require('path');
-const { _, urlJoin } = require('rk-utils');
+const { _, urlJoin, ensureLeftSlash } = require('rk-utils');
 const { Feature, Literal } = require('..').enum;
 const { tryRequire } = require('@k-suite/app/lib/utils/Helpers');
 const SocketServer = tryRequire('socket.io');
@@ -19,7 +19,7 @@ function loadEventHandler(appModule, channelName, controllerBasePath, handlerNam
             throw new InvalidConfiguration(
                 `Invalid middleware reference: ${handlerName}`,
                 appModule,
-                `socketServer.channels.${channelName}.middlewares`
+                channelName ? `socketServer.channels.${channelName}.middlewares` : 'socketServer.middlewares'
             );
         } else {
             throw new InvalidConfiguration(
@@ -41,7 +41,7 @@ function loadEventHandler(appModule, channelName, controllerBasePath, handlerNam
             throw new InvalidConfiguration(
                 `Middleware function not found: ${handlerName}`,
                 appModule,
-                `socketServer.channels.${channelName}.middlewares`
+                channelName ? `socketServer.channels.${channelName}.middlewares` : 'socketServer.middlewares'
             );
         } else {
             throw new InvalidConfiguration(
@@ -66,16 +66,20 @@ module.exports = {
     /**
      * Load the rpc Server
      * @param {AppModule} appModule - The app module object
-     * @param {Object} config - Rpc server config
+     * @param {object} config - Rpc server config
      * @property {string} [config.path] - The path of socket server
      * @property {int} [config.port] - The port number of the server
-     * @property {Object.<string, Object>} [config.channels] - Channels
+     * @property {string} [config.controllersPath] - The port number of the server
+     * @property {object} [config.middlewares] - Middlewares for all channel
+     * @property {object.<string, Object>} [config.channels] - Channels
      */
     load_: (appModule, config) => {        
         let io, standalone = false;
         
         let endpointPath = config.path ? urlJoin(appModule.route, config.path) : appModule.route;
-        appModule.log('verbose', 'Socket server listening path: ' + endpointPath);
+        endpointPath = ensureLeftSlash(endpointPath);
+
+        appModule.log('verbose', '[socketServer]Server listening at: ' + endpointPath);        
 
         let options = {
             path: endpointPath
@@ -88,9 +92,17 @@ module.exports = {
             io = new SocketServer(appModule.server.httpServer, options)
         }
 
-        let logger;
-        if (config.logger) {
-            logger = appModule.getService('logger:' + config.logger);
+        io.on('connection', socket => {
+            appModule.log('info', '[socketServer]New client connected.', {
+                id: socket.id,
+                handshake: socket.handshake
+            });
+        });
+
+        let controllersPath = path.resolve(appModule.backendPath, config.controllersPath || Literal.WS_CONTROLLERS_PATH);
+
+        if (config.middlewares) {
+            io.use(loadEventHandler(appModule, null, controllersPath, middlewareName, true));
         }
 
         if (_.isEmpty(config.channels)) {
@@ -99,19 +111,12 @@ module.exports = {
                 appModule,
                 'socketServer.channels'
             );
-        }
-
-        let controllersPath = path.join(appModule.backendPath, Literal.REMOTE_CALLS_PATH);
+        }        
 
         _.forOwn(config.channels, (info, name) => {
-            let ioChannel = io.of(name);
+            name = ensureLeftSlash(name);
 
-            if (logger) {
-                ioChannel.use((socket, next) => {
-                    next && next();
-                    logger.info('Access from [' + socket.id + '].');
-                });
-            }
+            let ioChannel = io.of(name);
 
             if (info.middlewares) {
                 let m = Array.isArray(info.middlewares) ? info.middlewares : [ info.middlewares ];
@@ -122,18 +127,22 @@ module.exports = {
 
             let eventHandlers;
 
-            if (info.controller) {
-                if (info.events) {
-                    appModule.log('warn', 'When controller is set for a rpc endpoint, "events" hooks will be ignored.');
-                }
-
+            if (info.controller) {                
                 let rpcControllerPath = path.resolve(controllersPath, info.controller + '.js');
                 eventHandlers = require(rpcControllerPath);
-            } else if (info.events) {
+
+                appModule.log('info', `[socketServer]Controller "${info.controller}" attached for channel "${name}".`);
+            } 
+            
+            if (info.events) {
                 eventHandlers = {};
 
                 _.forOwn(info.events, (handler, event) => {
-                    eventHandlers[event] = loadEventHandler(appModule, name, controllersPath, handler);
+                    eventHandlers[event] = loadEventHandler(appModule, name, controllersPath, handler);                    
+                });
+
+                appModule.log('info', `[socketServer]Event handlers attached for channel "${name}".`, {
+                    events: Object.keys(eventHandlers)
                 });
             }
 
@@ -145,19 +154,15 @@ module.exports = {
                 );
             }
 
-            ioChannel.on('connection', function (socket) {
+            ioChannel.on('connect', function (socket) {
+                appModule.log('info', `[socketServer]Client [id=${socket.id}] connected to channel "${name}".`);
+
                 //Register event handlers
-                _.forOwn(eventHandlers, (handler, event) => {
-                    socket.on(event, (data, cb) => {
-                        logger && logger.log('verbose', 'Socket client event emitted: ' + event + ', argument number: ' + arguments.length);
+                for (let event in eventHandlers) {
+                    let handler = eventHandlers[event];
 
-                        console.log('arg0: ' + data);
-                        
-                        handler({ appModule, socket }, data).then((res) => cb(res));
-                    });
-                });
-
-                logger && logger.log('verbose', 'Socket client connected.');
+                    socket.on(event, (data, cb) => handler({ appModule, socket }, data).then(cb));
+                }                
 
                 if (info.welcomeMessage) {
                     socket.emit('welcome', info.welcomeMessage);
@@ -167,7 +172,7 @@ module.exports = {
 
         if (standalone) {
             io.listen(config.port);
-            appModule.log('info', `A socket server is listening on port [${config.port}] ...`);
+            appModule.log('info', `[socketServer]A standalone socket server is listening on port [${config.port}] ...`);
         }
     }
 };

@@ -78,7 +78,7 @@ module.exports = {
             server.log('error', err.message, _.pick(err, ['name', 'status', 'code', 'extraInfo', 'stack']));                
         });                
         
-        server.httpServer = require('http').createServer(koa.callback());        
+        server.httpServer = require('http').createServer(koa.callback());                
 
         let port = options.httpPort || 2331;
 
@@ -86,7 +86,18 @@ module.exports = {
             server.httpServer.listen(port, function (err) {
                 if (err) throw err;
 
-                server.log('info', `A http service is listening on port [${server.httpServer.address().port}] ...`);
+                let address = server.httpServer.address();
+
+                let host;
+                if (address.family === 'IPv6' && address.address === '::') {
+                    host = '127.0.0.1';
+                } else {
+                    host = address.address;
+                }
+
+                server.host = `${host}:${address.port}`;
+
+                server.log('info', `A http service is listening on port [${address.port}] ...`);
                 /**
                  * Http server ready event
                  * @event WebServer#httpReady

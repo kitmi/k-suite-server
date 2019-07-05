@@ -1,31 +1,39 @@
 'use strict';
 
 const path = require('path');
-const request = require('supertest');
 const Util = require('rk-utils');
 const WebServer = require('../../WebServer');
+const { Manager } = require('socket.io-client');
 
 const WORKING_DIR = path.resolve(__dirname, '../../../test/temp');
 
-describe('unit:middleware:favicon', function () {
+const WelcomeMessage = "What's up?";
+
+describe.only('unit:features:socketServer', function () {
     let webServer;
 
     before(async function () {
         Util.fs.emptyDirSync(WORKING_DIR);
-        let publicPath = path.join(WORKING_DIR, 'public');
-        Util.fs.ensureDirSync(publicPath);
-        Util.fs.copyFileSync(path.resolve(__dirname, '../../../test/fixtures/files/favicon.ico'), path.join(publicPath, 'favicon.ico'));
+        let controllerPath = path.join(WORKING_DIR, 'server/wsControllers');
+        Util.fs.ensureDirSync(controllerPath);
+        Util.fs.copyFileSync(path.resolve(__dirname, '../../../test/fixtures/files/heartbeat.js'), path.join(controllerPath, 'heartbeat.js'));
 
         webServer = new WebServer('test server', { 
             workingPath: WORKING_DIR
         });
 
         webServer.once('configLoaded', () => {
-            webServer.config = {
+            webServer.config = {                
                 "koa": {                    
                 },
                 "socketServer": {
-                    
+                    "path": "/ws-api",                    
+                    "channels": {    
+                        "/heartbeat": {
+                            "controller": "heartbeat",
+                            "welcomeMessage": WelcomeMessage
+                        }
+                    }        
                 }
             };
         });
@@ -38,12 +46,24 @@ describe('unit:middleware:favicon', function () {
         Util.fs.removeSync(WORKING_DIR);
     });
 
-    describe('middleware:favicon', function () {
-        it('should return status ok', function (done) {            
-            request(webServer.httpServer)
-                .get('/favicon.ico')
-                .expect(200)
-                .end(done);
+    describe('handshake', function () {
+        it('welcome message', function (done) {              
+            const mgr = new Manager('http://'+ webServer.host, { path: '/ws-api' });
+            let heartbeatWs = mgr.socket('/heartbeat')
+
+            heartbeatWs.on('welcome', data => {
+                data.should.be.equal(WelcomeMessage);
+
+                heartbeatWs.emit('echo', 'hello', (echo) => {                    
+                    echo.should.be.equal('hello');
+                    heartbeatWs.close();
+                    done();
+                });                    
+            });
+
+            heartbeatWs.on('connect_error', (error) => {
+                console.error(error);
+            });
         });
     });
 });
