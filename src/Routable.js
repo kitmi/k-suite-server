@@ -108,7 +108,7 @@ const Routable = T => class extends T {
             return this.middlewareFactoryRegistry[name];
         }
 
-        if (this.server) {
+        if (this.server && this.server !== this) {
             return this.server.getMiddlewareFactory(name);
         }
 
