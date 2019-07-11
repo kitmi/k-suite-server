@@ -182,6 +182,10 @@ module.exports = {
                     if (info.welcomeMessage) {
                         socket.emit('welcome', info.welcomeMessage);
                     }
+
+                    socket.on('disconnect', () => {
+                        appModule.log('info', `[${serverTag}]Client [id=${socket.id}] disconnected from channel "${name}".`);
+                    });
                 });
             });
 

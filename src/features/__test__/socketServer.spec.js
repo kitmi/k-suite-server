@@ -48,6 +48,7 @@ describe('unit:features:socketServer', function () {
 
     describe('handshake', function () {
         it('welcome message', function (done) {              
+            const { Manager } = require('socket.io-client');
             const mgr = new Manager('http://'+ webServer.host, { path: '/ws-api' });
             let heartbeatWs = mgr.socket('/heartbeat')
 
