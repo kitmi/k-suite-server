@@ -455,7 +455,7 @@ module.exports = (app, baseRoute, options) => {
 
         let { where, data } = ctx.request.body;
 
-        let model = await EntityModel.updateOne_(data, { 
+        let model = await EntityModel.updateMany_(data, { 
             $query: where, 
             $retrieveUpdated: true,
             $variables: { 
