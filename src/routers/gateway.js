@@ -293,7 +293,7 @@ module.exports = (app, baseRoute, options) => {
             let entityName = _.camelCase(ctx.params.entity);
             let apiInfo = entityModels[entityName];
             if (!apiInfo) {
-                throw new BadRequest('Entity endpoint not found.');
+                throw new BadRequest('Entity endpoint not found.', { url: ctx.url });
             }
 
             let db = ctx.appModule.db(options.schemaName);
@@ -318,7 +318,7 @@ module.exports = (app, baseRoute, options) => {
         let entityName = _.camelCase(ctx.params.entity);
         let apiInfo = entityModels[entityName];
         if (!apiInfo) {
-            throw new BadRequest('Entity endpoint not found.');
+            throw new BadRequest('Entity endpoint not found.', { url: ctx.url });
         }
 
         let queryOptions, EntityModel;
@@ -358,7 +358,7 @@ module.exports = (app, baseRoute, options) => {
         let entityName = _.camelCase(ctx.params.entity);
         let apiInfo = entityModels[entityName];
         if (!apiInfo) {
-            throw new BadRequest('Entity endpoint not found.');
+            throw new BadRequest('Entity endpoint not found.', { url: ctx.url });
         }
 
         let EntityModel, queryOptions, keyField;
@@ -417,7 +417,7 @@ module.exports = (app, baseRoute, options) => {
         let entityName = _.camelCase(ctx.params.entity);
         let apiInfo = entityModels[entityName];
         if (!apiInfo) {
-            throw new BadRequest('Entity endpoint not found.');
+            throw new BadRequest('Entity endpoint not found.', { url: ctx.url });
         }
 
         if (apiInfo.readOnly) {
@@ -444,7 +444,7 @@ module.exports = (app, baseRoute, options) => {
         let entityName = _.camelCase(ctx.params.entity);
         let apiInfo = entityModels[entityName];
         if (!apiInfo) {
-            throw new BadRequest('Entity endpoint not found.');
+            throw new BadRequest('Entity endpoint not found.', { url: ctx.url });
         }
 
         if (apiInfo.readOnly) {
@@ -474,7 +474,7 @@ module.exports = (app, baseRoute, options) => {
         let entityName = _.camelCase(ctx.params.entity);
         let apiInfo = entityModels[entityName];
         if (!apiInfo) {
-            throw new BadRequest('Entity endpoint not found.');
+            throw new BadRequest('Entity endpoint not found.', { url: ctx.url });
         }
 
         if (apiInfo.readOnly) {
@@ -504,7 +504,7 @@ module.exports = (app, baseRoute, options) => {
         let entityName = _.camelCase(ctx.params.entity);
         let apiInfo = entityModels[entityName];
         if (!apiInfo) {
-            throw new BadRequest('Entity endpoint not found.');
+            throw new BadRequest('Entity endpoint not found.', { url: ctx.url });
         }
 
         if (apiInfo.readOnly) {
