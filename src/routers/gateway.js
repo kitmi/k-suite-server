@@ -20,7 +20,7 @@ function ensureInt(name, value) {
     return sanitized;
 }
 
-function processKeyValuePair(meta, assocs, queries, key, value) {
+function processKeyValuePair(ctx, meta, assocs, queries, key, value) {
     let lastDot = key.lastIndexOf('.');
 
     if (lastDot > 0) {
@@ -30,7 +30,7 @@ function processKeyValuePair(meta, assocs, queries, key, value) {
         if (lastPart.startsWith('$')) {
             value = { [lastPart]: value };
 
-            return processKeyValuePair(meta, assocs, queries, leftPart, value);
+            return processKeyValuePair(ctx, meta, assocs, queries, leftPart, value);
         }
 
         assocs.add(leftPart);
@@ -128,7 +128,7 @@ function processQuery(ctx, apiInfo, meta) {
                     assocs.add(assoc);
                 } 
             } else {
-                processKeyValuePair(meta, assocs, queries, key, value);
+                processKeyValuePair(ctx, meta, assocs, queries, key, value);
             }
         });
     }   
@@ -293,7 +293,7 @@ module.exports = (app, baseRoute, options) => {
             let entityName = _.camelCase(ctx.params.entity);
             let apiInfo = entityModels[entityName];
             if (!apiInfo) {
-                throw new BadRequest('Entity endpoint not found.', { url: ctx.url });
+                throw new BadRequest('Entity endpoint not found.');
             }
 
             let db = ctx.appModule.db(options.schemaName);
@@ -318,7 +318,7 @@ module.exports = (app, baseRoute, options) => {
         let entityName = _.camelCase(ctx.params.entity);
         let apiInfo = entityModels[entityName];
         if (!apiInfo) {
-            throw new BadRequest('Entity endpoint not found.', { url: ctx.url });
+            throw new BadRequest('Entity endpoint not found.');
         }
 
         let queryOptions, EntityModel;
@@ -358,7 +358,7 @@ module.exports = (app, baseRoute, options) => {
         let entityName = _.camelCase(ctx.params.entity);
         let apiInfo = entityModels[entityName];
         if (!apiInfo) {
-            throw new BadRequest('Entity endpoint not found.', { url: ctx.url });
+            throw new BadRequest('Entity endpoint not found.');
         }
 
         let EntityModel, queryOptions, keyField;
@@ -417,7 +417,7 @@ module.exports = (app, baseRoute, options) => {
         let entityName = _.camelCase(ctx.params.entity);
         let apiInfo = entityModels[entityName];
         if (!apiInfo) {
-            throw new BadRequest('Entity endpoint not found.', { url: ctx.url });
+            throw new BadRequest('Entity endpoint not found.');
         }
 
         if (apiInfo.readOnly) {
@@ -444,7 +444,7 @@ module.exports = (app, baseRoute, options) => {
         let entityName = _.camelCase(ctx.params.entity);
         let apiInfo = entityModels[entityName];
         if (!apiInfo) {
-            throw new BadRequest('Entity endpoint not found.', { url: ctx.url });
+            throw new BadRequest('Entity endpoint not found.');
         }
 
         if (apiInfo.readOnly) {
@@ -474,7 +474,7 @@ module.exports = (app, baseRoute, options) => {
         let entityName = _.camelCase(ctx.params.entity);
         let apiInfo = entityModels[entityName];
         if (!apiInfo) {
-            throw new BadRequest('Entity endpoint not found.', { url: ctx.url });
+            throw new BadRequest('Entity endpoint not found.');
         }
 
         if (apiInfo.readOnly) {
@@ -504,7 +504,7 @@ module.exports = (app, baseRoute, options) => {
         let entityName = _.camelCase(ctx.params.entity);
         let apiInfo = entityModels[entityName];
         if (!apiInfo) {
-            throw new BadRequest('Entity endpoint not found.', { url: ctx.url });
+            throw new BadRequest('Entity endpoint not found.');
         }
 
         if (apiInfo.readOnly) {
