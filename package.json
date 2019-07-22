@@ -5,13 +5,16 @@
   "publishConfig": {
     "access": "public"
   },
+  "bin": {
+    "ks-server": "./lib/cli/ks-server.js"
+  },
   "description": "A modular web application framework based on koa.",
   "scripts": {
     "doc": "jsdoc -c jsdoc.json -t ./node_modules/ink-docstrap/template -R README.md -d './docs' -r --verbose ./src",
     "test:all": "npm run test:spec && npm run test:mocha",
     "test:spec": "mocha --recursive src/**/*.spec.js --timeout 5000",
     "test:mocha": "mocha test/*.mocha.js --timeout 5000",
-    "test": "npm run build:test && npm run test:all",    
+    "test": "npm run build:test && npm run test:all",
     "cover": "npm run build:test && npm run cover:unit && npm run cover:integration && npm run cover:report",
     "cover:unit": "nyc --silent npm run test:spec",
     "cover:integration": "nyc --silent --no-clean npm run test:mocha",

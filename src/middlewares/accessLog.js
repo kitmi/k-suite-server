@@ -25,10 +25,10 @@ module.exports = (opt, app) => {
     return async (ctx, next) => {
         let startAt = app.now();       
 
-        await next();
+        await next();        
 
         let info = {
-            ip: ctx.ip,
+            ip: ctx.header['x-real-ip'] || ctx.ip,
             method: ctx.method,
             url: ctx.url,
             originalUrl: ctx.originalUrl,           
