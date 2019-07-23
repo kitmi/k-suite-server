@@ -43,6 +43,8 @@ module.exports = {
                 let connectorService = Connector.createConnector(dbms, connectionString, { logger: app.server.logger, ...other });
                 app.registerService(serviceName, connectorService);
 
+                app.log('info', `Data source [${serviceName}] connects to "${connectorService.getConnectionStringWithoutCredential()}".`);
+
                 app.on('stopping', () => {
                     connectorService.end_().then();
                 });
