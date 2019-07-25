@@ -16,13 +16,7 @@ const Routable = T => class extends T {
      * @property {string} [options.publicPath='public'] - Relative path of front-end static files 
      */         
     constructor(name, options) {
-        super(name, options);
-
-        /**
-         * Backend files path.
-         * @member {string}         
-         **/
-        this.backendPath = this.toAbsolutePath(this.options.backendPath || Literal.BACKEND_PATH);
+        super(name, options);        
 
         /**
          * Frontend source files path.

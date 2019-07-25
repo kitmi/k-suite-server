@@ -20,12 +20,7 @@ module.exports = Object.assign({}, Literal, {
     /**
      * App modules path
      */
-    APP_MODULES_PATH: 'app_modules',    
-
-    /**
-     * Backend files path
-     */
-    BACKEND_PATH: 'server',
+    APP_MODULES_PATH: 'app_modules',        
 
     /**
      * Backend sources path
@@ -81,11 +76,6 @@ module.exports = Object.assign({}, Literal, {
      * Views files path, under backend folder
      */
     VIEWS_PATH: 'views',
-
-    /**
-     * Models files path, under backend folder
-     */
-    MODELS_PATH: 'models',
 
     /**
      * Database scripts path
