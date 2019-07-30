@@ -33,6 +33,12 @@ class WebModule extends Routable(ServiceContainer) {
         this.server = server;        
 
         /**
+         * Whether it is a server.
+         * @member {boolean}
+         **/
+        this.isServer = false;
+
+        /**
          * Mounting route.
          * @member {string}
          */

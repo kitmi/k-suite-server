@@ -42,6 +42,12 @@ class WebServer extends Routable(Runable(ServiceContainer)) {
         this.server = this;
 
         /**
+         * Whether it is a server.
+         * @member {boolean}
+         **/
+        this.isServer = true;
+
+        /**
          * App modules path.
          * @member {string}
          */
