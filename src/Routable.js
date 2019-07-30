@@ -267,6 +267,7 @@ const Routable = T => class extends T {
         }
 
         url = ensureLeftSlash(url);
+
         if (query) {
             url = urlAppendQuery(url, query);
             url = url.replace('/?', '?');
@@ -284,7 +285,7 @@ const Routable = T => class extends T {
     wrapAction(action) {
         return async (ctx) => {
             ctx.toUrl = (relativePath, ...pathOrQuery) => {
-                return ctx.origin + this.toWebPath(relativePath, pathOrQuery);
+                return ctx.origin + this.toWebPath(relativePath, ...pathOrQuery);
             };
 
             Object.assign(ctx.state, {
