@@ -44,7 +44,8 @@ const Routable = T => class extends T {
 
         this.on('configLoaded', () => {
             //load middlewares if exists in server or app path
-            let middlewareDir = this.toAbsolutePath(Literal.MIDDLEWARES_PATH);
+            let middlewareDir = path.join(this.backendPath, Literal.MIDDLEWARES_PATH);
+            
             if (fs.existsSync(middlewareDir)) {
                 this.loadMiddlewaresFrom(middlewareDir);
             }            

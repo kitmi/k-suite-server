@@ -28,10 +28,20 @@ module.exports = {
      * @property {string} [config.dataSource] - Store type of acl
      * @property {object} [config.prefix] - Store options
      * @returns {Promise.<*>}
+     * 
+     * @example
+     * 
+     * acl: {
+     *   backend: 'mongodb.dataSourceName'
+     * }
      */
     load_: async function (app, config) {
         let backend = config.backend || 'memory';
-        let backendStore;
+        let backendType, backendStore;
+
+        if (backend.indexOf('.') > 0) {
+            backendType = '';
+        }
 
         switch (backend) {
             case 'memory':
