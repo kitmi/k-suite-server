@@ -329,8 +329,7 @@ module.exports = (app, baseRoute, options) => {
             EntityModel = db.model(entityName);
 
             queryOptions = { 
-                ...processQuery(ctx, apiInfo),
-                $unboxing: true, 
+                ...processQuery(ctx, apiInfo),                
                 $association: apiInfo.joinWith
             };
 
@@ -338,8 +337,7 @@ module.exports = (app, baseRoute, options) => {
             EntityModel = db.model(entityName);
 
             queryOptions = { 
-                ...processQuery(ctx, apiInfo, EntityModel.meta),
-                $unboxing: true
+                ...processQuery(ctx, apiInfo, EntityModel.meta)
             };
         }
 
@@ -371,7 +369,6 @@ module.exports = (app, baseRoute, options) => {
 
             queryOptions = { 
                 $query: { [keyField]: keyValue, ...apiInfo.where },
-                $unboxing: true, 
                 $association: apiInfo.joinWith
             };
 
@@ -388,8 +385,7 @@ module.exports = (app, baseRoute, options) => {
             });
 
             queryOptions = { 
-                $query: { [keyField]: keyValue }, 
-                $unboxing: true
+                $query: { [keyField]: keyValue }
             };
 
             if (assocs.length > 0) {
