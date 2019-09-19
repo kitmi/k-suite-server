@@ -42,7 +42,7 @@ class WebModule extends Routable(ServiceContainer) {
          * Mounting route.
          * @member {string}
          */
-        this.route = ensureLeftSlash(trimRightSlash(route));        
+        this.route = ensureLeftSlash(trimRightSlash(route));               
     }  
 
     /**
