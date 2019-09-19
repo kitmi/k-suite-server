@@ -328,7 +328,7 @@ const Routable = T => class extends T {
     }
 
     _getFeatureFallbackPath() {
-        return super._getFeatureFallbackPath().concat([ this.toAbsolutePath(Literal.BACKEND_PATH, Literal.FEATURES_PATH) ]);
+        return super._getFeatureFallbackPath().concat([ path.join(this.backendPath, Literal.FEATURES_PATH) ]);
     }
 };
 
