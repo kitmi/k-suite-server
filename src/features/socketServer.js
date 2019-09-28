@@ -94,7 +94,7 @@ module.exports = {
                 );
             }
 
-            appModule.log('verbose', `[${serverTag}]Server listening at: ${endpointPath}`);        
+            appModule.log('info', `[${serverTag}]Server listening at: ${endpointPath}`);        
 
             let options = {
                 path: endpointPath
@@ -108,7 +108,7 @@ module.exports = {
             }
 
             io.on('connection', socket => {
-                appModule.log('info', `[${serverTag}]New client connected.`, {
+                appModule.log('verbose', `[${serverTag}]New client connected.`, {
                     id: socket.id,
                     handshake: socket.handshake
                 });
@@ -146,7 +146,7 @@ module.exports = {
                     let rpcControllerPath = path.resolve(controllersPath, info.controller + '.js');
                     eventHandlers = require(rpcControllerPath);
 
-                    appModule.log('info', `[${serverTag}]Controller "${info.controller}" attached for channel "${name}".`);
+                    appModule.log('verbose', `[${serverTag}]Controller "${info.controller}" attached for channel "${name}".`);
                 } 
                 
                 if (info.events) {
@@ -156,7 +156,7 @@ module.exports = {
                         eventHandlers[event] = loadEventHandler(appModule, name, controllersPath, handler);                    
                     });
 
-                    appModule.log('info', `[${serverTag}]Event handlers attached for channel "${name}".`, {
+                    appModule.log('verbose', `[${serverTag}]Event handlers attached for channel "${name}".`, {
                         events: Object.keys(eventHandlers)
                     });
                 }
